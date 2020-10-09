@@ -1,0 +1,29 @@
+#bookDetails{
+    width: 200px;
+    font-size: 24px;
+    height: 35px;
+}
+
+#quickPurchase .far, #quickPurchase .fas{
+    cursor: pointer;
+    background-color: #fff;
+    color: #000;
+    height: 35px;
+    width: 35px;
+    font-size: 20px;
+    padding: 7px;
+    margin: 5%;
+    margin-bottom: 5%;
+}
+
+#quickPurchase .btn-secondary{
+    background: transparent !important;
+    border: none;
+    box-shadow: none !important;
+}
+
+#icon:hover .btn-secondary{
+    border: groove;
+    transition: 1.5s ease;
+    border-color: #000;
+}

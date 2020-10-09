@@ -1,0 +1,8 @@
+Saturday October 3rd, 2020 (8:57pm):- SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it.
+
+Wednesday October 7th, 2020 (4:13pm):- SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it.
+
+Wednesday October 7th, 2020 (4:13pm):- SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it.
+
+Wednesday October 7th, 2020 (4:13pm):- SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it.
+

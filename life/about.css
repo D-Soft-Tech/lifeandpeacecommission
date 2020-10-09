@@ -1,0 +1,25 @@
+@media screen and (min-width: 768px) {
+
+    .modal-dialog {
+
+        width: 700px; /* New width for default modal */
+
+    }
+
+    .modal-sm {
+
+        width: 350px; /* New width for small modal */
+
+    }
+
+}
+
+@media screen and (min-width: 992px) {
+
+    .modal-lg {
+
+        width: 95vw; /* New width for large modal */
+
+    }
+
+}

@@ -1,0 +1,20 @@
+Wednesday September 2nd, 2020 (5:04am):- SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it.
+
+Thursday October 8th, 2020 (8:44am):- SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it.
+
+Thursday October 8th, 2020 (4:43pm):- An uncaught error just occured
+
+Thursday October 8th, 2020 (4:50pm):- An uncaught error just occured
+
+Thursday October 8th, 2020 (4:50pm):- An uncaught error just occured
+
+Thursday October 8th, 2020 (4:50pm):- An uncaught error just occured
+
+Thursday October 8th, 2020 (4:50pm):- An uncaught error just occured
+
+Thursday October 8th, 2020 (4:51pm):- An uncaught error just occured
+
+Thursday October 8th, 2020 (4:51pm):- An uncaught error just occured
+
+Thursday October 8th, 2020 (4:51pm):- An uncaught error just occured
+

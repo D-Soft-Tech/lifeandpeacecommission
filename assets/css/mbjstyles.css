@@ -1,0 +1,7 @@
+.jumbotron {
+	margin-top: 20%;
+    opacity: 0.2;
+    color: #fff;
+    background-image: url("bgimage.jpg");
+    background-size: cover;
+}
