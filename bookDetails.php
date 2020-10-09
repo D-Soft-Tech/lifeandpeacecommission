@@ -1,3 +1,7 @@
+<?php
+    session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -63,6 +67,40 @@ The three most essential aspect of our family are: Sound Teachings, Sweet Fellow
         </li>
         <li><a href="contact.php">Give Online</a></li>
         <li><a href="contact.php">CONTACT</a></li>
+        <?php
+            function href()
+            {
+            if(!isset($_SESSION['username_frontEnd']) && !isset($_SESSION['password_frontEnd']))
+            {
+            echo "<li class='dropdown'>". 
+                    "<a href='logs.php'>".
+                        "<b>Login</b>".
+                    "</a>".
+                    "</li>";
+            }
+            else
+            {
+                echo '<li><a href="#" class="dropdown-toggle" data-toggle="dropdown"><b>'.$_SESSION['username_frontEnd'].'<span class="caret"></span></b></a>';
+            }
+            }
+
+            href();
+
+            function is_loggedIn()
+            {
+            if(isset($_SESSION['username_frontEnd']) && isset($_SESSION['password_frontEnd']))
+            {
+                echo  '<ul class="dropdown-menu dropdown-menu-left" role="menu">'.
+                        '<li>'.
+                        '<a href="" class="mr-0 pr-0 dropdown-item" data-toggle="modal" data-target="#loginModal"><b>Log out</b></a>'.
+                        '</li>'.
+                    '</ul>';
+            }
+            }
+
+            is_loggedIn();
+        ?>
+        </li>
       </ul>
     </div>
     <!--/.nav-collapse --> 
@@ -113,15 +151,15 @@ The three most essential aspect of our family are: Sound Teachings, Sweet Fellow
                                         <h6 Class="bg-success" style="padding: 10px;">Details</h6>
                                     </div>
                                     <div class="col-xs-12" style="margin-left: 20px; line-height: 1.5;">
-                                        <p>Price: <span class="font-weight-bold"><?= $book_price; ?></span></p>
-                                        <p>Volume: <span class="font-weight-bold"><?= $book_volume; ?></span></p>
-                                        <p>Pages: <span class="font-weight-bold"><?= $book_page; ?></span></p>
+                                        <p>Price: <span><b><?= $book_price; ?></b></span></p>
+                                        <p>Volume: <span><b><?= $book_volume; ?></b></span></p>
+                                        <p>Pages: <span><b><?= $book_page; ?></b></span></p>
                                         <br />
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-4"><button type="submit" class="btn-transition btn btn-success"><i class="fa fa-credit-card"></i></button></div>
-                                    <div class="col-md-4"><button type="submit" class="btn-transition btn btn-outline-white" title="Add to cart"><i class="fa fa-cart-plus"></i></button></div>
+                                    <div class="col-md-4"><button type="submit" class="btn-transition btn btn-success" title="buy now"><i class="fa fa-credit-card"></i></button></div>
+                                    <div class="col-md-4"><button type="submit" class="btn-transition btn btn-success" title="Add to cart"><i class="fa fa-cart-plus"></i></button></div>
                                     <div class="col-md-4"><button type="submit" title="Go Back to Books" class="btn-transition btn btn-success"><i class="fa fa-arrow-left"></i></button></div>
                                 </div>
                             </div>

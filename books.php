@@ -76,6 +76,7 @@
     	
     $Next = nextArrow();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -141,6 +142,40 @@ The three most essential aspect of our family are: Sound Teachings, Sweet Fellow
         </li>
         <li><a href="contact.php">Give Online</a></li>
         <li><a href="contact.php">CONTACT</a></li>
+        <?php
+            function href()
+            {
+            if(!isset($_SESSION['username_frontEnd']) && !isset($_SESSION['password_frontEnd']))
+            {
+            echo "<li class='dropdown'>". 
+                    "<a href='logs.php'>".
+                        "<b>Login</b>".
+                    "</a>".
+                    "</li>";
+            }
+            else
+            {
+                echo '<li><a href="#" class="dropdown-toggle" data-toggle="dropdown"><b>'.$_SESSION['username_frontEnd'].'<span class="caret"></span></b></a>';
+            }
+            }
+
+            href();
+
+            function is_loggedIn()
+            {
+            if(isset($_SESSION['username_frontEnd']) && isset($_SESSION['password_frontEnd']))
+            {
+                echo  '<ul class="dropdown-menu dropdown-menu-left" role="menu">'.
+                        '<li>'.
+                        '<a href="" class="mr-0 pr-0 dropdown-item" data-toggle="modal" data-target="#loginModal"><b>Log out</b></a>'.
+                        '</li>'.
+                    '</ul>';
+            }
+            }
+
+            is_loggedIn();
+        ?>
+        </li>
       </ul>
     </div>
     <!--/.nav-collapse --> 
@@ -159,24 +194,11 @@ The three most essential aspect of our family are: Sound Teachings, Sweet Fellow
             <p class="lead">Here are some books authored by our father in the Lord, Apostle Gbade Olorire to help your spiritual growth.</p>
         </div>
     </div>
-    <div id="alertMessage">
-        <?php
-            $message =" "; function alert($message){ echo $message; }
 
-            if(isset($_POST['addToCartId'])){
-                $book_id = $_POST['addToCartId'];
-        
-                $message = '<div style="padding-right: 20%; padding-left: 20%;" class="text-center">'.
-                                '<div class="col-sm-12 mr-5 alert alert-success alert-dismissable">'.
-                                    '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
-                                    '<h6><i class="icon fa pe-7s-check"></i>'. $book_name. 'has been added to your cart</h6>'.
-                                '</div>'.
-                            '</div>';
-                echo $message;
-            }
-        ?>
+    <div id="alertMessageDiv">
     </div>
-    <div class="ml-5 row mt-0 text-center">
+
+    <div class="ml-5 row mt-0 text-center" style="margin-top: 0px;">
         <nav aria-label="Page navigation">
             <ul class="pagination">
                 <li>
@@ -209,20 +231,20 @@ The three most essential aspect of our family are: Sound Teachings, Sweet Fellow
             <div class="col-md-9 col-xs-12 has-margin-bottom">
                 <?php foreach($books as $books) :  ?>
                 <div class="row">
-                    <div class="col-md-2 col-xs-12 mx-1">
+                    <div class="col-md-2 col-xs-6 mx-1">
                         <div class="text-center" id="book-top">
                             <img class="img-resoponsive" src="images/books/<?= $books['book_title']; ?>.<?= $books['ext']; ?>" alt="<?= $books['book_title']; ?>" style="height: 200px; width: 100%;">
                             <h6 class="text-center"><?= $books['price']; ?></h6>
                             <div class="overlay">
-                                <button class="btn btn-secondary" onclick="addToCart('<?= $books['book_id']; ?>')" title="Add to Cart"><i class="fas fa-shopping-cart"></i></button>
+                                <button class="btn btn-secondary" onclick="addToCart('<?= $books['book_id']; ?>', '<?= $books['book_title']; ?>')" title="Add to Cart"><i class="fas fa-shopping-cart"></i></button>
                                 <button class="btn btn-secondary" title="Buy now"><a href="bookDetails.php?book_id=<?= $books['book_id']; ?>&book_description=<?= $books['book_description'];?>&book_price=<?= $books['price'];?>&book_volume=<?= $books['volume'];?>&book_page=<?= $books['page_count'];?>&book_title=<?= $books['book_title'];?>&book_ext1=<?= $books['ext'];?>&book_ext2=<?= $books['ext2'];?>"> <i class="fas fa-eye"></i></a></button>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-10 col-xs-12 ml-3">
+                    <div class="col-md-10 col-xs-6 ml-3">
                         <h5 class=""><?= $books['book_title']; ?></h5>
                         <p class="card-text text-justify">
-                        <?= $books['book_description']; ?> <a href="bookDetails.php" class="text-info" role="button">&nbsp;Read more →</a>
+                        <?= $books['book_description']; ?> <a href="bookDetails.php?book_id=<?= $books['book_id']; ?>&book_description=<?= $books['book_description'];?>&book_price=<?= $books['price'];?>&book_volume=<?= $books['volume'];?>&book_page=<?= $books['page_count'];?>&book_title=<?= $books['book_title'];?>&book_ext1=<?= $books['ext'];?>&book_ext2=<?= $books['ext2'];?>">&nbsp;Read more →</a>
                         </p>
                     </div>
                     <hr class="">
@@ -285,25 +307,22 @@ The three most essential aspect of our family are: Sound Teachings, Sweet Fellow
 <?php
   include_once 'footer/footer.php';
 ?>
-<!-- Bootstrap core JavaScript
-================================================== --> 
-<!-- Placed at the end of the document so the pages load faster --> 
-<script src="js/jquery.js"></script> 
-<script src="js/bootstrap.min.js"></script>
-<script type="text/javascript" src="ajax_class.js"></script>
+
+<script src="ajax_class.js"></script>
 
 <script>
-    function addToCart(id)
+    function addToCart(id, name)
     {
+        var book_id = id;
         XmlHttp
         (
             {   
                 url: 'books.php',
                 type: 'POST',
-                data: "addToCartId="+id,
+                data: "addToCartId="+book_id+"&addToCartName="+name,
                 complete:function(xhr,response,status)
                 {   
-                    
+                   document.getElementById("alertMessageDiv").innerHTML = response; 
                 }
             }
         );
@@ -311,3 +330,19 @@ The three most essential aspect of our family are: Sound Teachings, Sweet Fellow
 </script>
 </body>
 </html>
+
+<?php
+    if(isset($_POST['addToCartId'])){
+        $book_id = $_POST['addToCartId'];
+        $book_name = $_POST['addToCartName'];
+
+        $message =  '<div class="alert alert-success alert-dismissable mt-2" style="margin-right: 10%; margin-top: 10px; margin-bottom: 0px; margin-left: 10%;">'.
+                        '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
+                        '<div class="">'.
+                            '<h6><i class="fa fa-check"></i>&nbsp;&nbsp;&nbsp; The book has been added to your cart</h6>'.
+                        '</div>'.
+                    '</div>';
+        
+        echo $message;
+    } 
+?>
