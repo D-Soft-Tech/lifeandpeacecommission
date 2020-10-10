@@ -326,3 +326,23 @@ $date = '2012/09/26';
  sk_test_a1812da9fb6d89298dd8899fdee290eddb66134b   (Test Secrete Key)
 
  pk_test_e1de14e19e0aee0cd1169fbe1a5d52de0c3d633a  (Test Public Key)
+
+
+
+
+clear db info 
+Everything all together is this:
+mysql://b39783f939332b:174e1286@us-cdbr-east-02.cleardb.com/heroku_be5ce62eb396741?reconnect=true
+
+<!-- Each of my heroku database details are as follows-->
+hostname: us-cdbr-east-02.cleardb.com
+
+databasename:  heroku_be5ce62eb396741
+
+username: b39783f939332b
+
+password: 021533dc36bd794
+
+port: this is always 3306
+
+mysql -ub39783f939332b -p -hus-cdbr-east-02.cleardb.com heroku_be5ce62eb396741 < C:\Users\Dell\Desktop\newLifeAndPeace.sql

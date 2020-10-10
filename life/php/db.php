@@ -2,18 +2,17 @@
 
     function get_DB()
     {
-        $host = "localhost";
-        $user = "d-SoftTech";
-        $password = "oloyede0828";
-        $db_name = "life_and_peace";
+        $host = "us-cdbr-east-02.cleardb.com";
+        $user = "b39783f939332b";
+        $password = "021533dc36bd794";
+        $db_name = "heroku_be5ce62eb396741";
 
         $dsn = "mysql:host=$host;dbname=$db_name";
 
-        // function uncaught(){
-        //     echo "The page is currently unavailable, please try again later <br>";
-        //     file_put_contents("error.txt", date("l F jS, Y (g:ia)", time()) . ":- ". "An uncaught error just occured" . PHP_EOL . PHP_EOL, FILE_APPEND);
-        // }
-
+        function uncaught(){
+            echo "The page is currently unavailable, please try again later <br>";
+            file_put_contents("error.txt", date("l F jS, Y (g:ia)", time()) . ":- ". "An uncaught error just occured" . PHP_EOL . PHP_EOL, FILE_APPEND);
+        }
         try {
             //set_exception_handler('uncaught');
             $conn = new PDO($dsn, $user, $password);
@@ -28,13 +27,3 @@
        
     }
 ?>
-
-<!-- DROP TABLE `admins`;
-DROP TABLE `announcement`;
-DROP TABLE `bank_details`;
-DROP TABLE `contact_us`;
-DROP TABLE `events`;
-DROP TABLE `quotes`;
-DROP TABLE `sermon`;
-DROP TABLE `top_announcement`;
-DROP TABLE `user`; -->
