@@ -1,73 +1,273 @@
 <?php
-  include_once 'header/header.php';
-?>
+  session_start();
 
-<!--SUBPAGE HEAD-->
+  require_once 'life/php/db.php';
+  
+  include_once 'header/header2.php';
 
-<div class="subpage-head has-margin-bottom">
-  <div class="container">
-    <h3>Sara is suffering from cancer</h3>
-    <p class="lead">Posted on 23 August 2014 by<a href="#" class="link-reverse">Steven</a></p>
-  </div>
-</div>
+  $conn = get_DB();
 
-<!-- // END SUBPAGE HEAD -->
+  $result = $conn->query("SELECT * FROM donation WHERE status = 'on_going'");
+  $check = $result->fetchAll();
 
-<div class="container">
-  <div class="row">
-    <div class="col-md-8 has-margin-bottom">
-      <article class="blog-content"> <img src="images/charity-donation-big.jpg" alt="charity donation" class="img-responsive has-margin-xs-bottom">
-        <p class="lead">Aenean lacinia bibendum nulla sed consectetur. Etiam porta sem malesuada magna mollis euismod. Fusce dapibus, tellus ac cursus commodo.</p>
-        <p>Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>
-        <p>Cum sociis natoque penatibus et magnis <a href="#">dis parturient montes</a>, nascetur ridiculus mus. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Sed posuere consectetur est at lobortis. Cras mattis consectetur purus sit amet fermentum.</p>
-      </article>
-    </div>
-    <!--// col md 9--> 
+    if(isset($_GET['searchDonationById']) && !empty($check))
+    {
+        $sanitizer = filter_var_array($_GET, FILTER_SANITIZE_STRING);
+
+        $donationID = $_GET['searchDonationById'];
+        
+        $result = $conn->query("SELECT * FROM donation WHERE id = '$donationID' && status = 'on_going'");
+        $donations = $result->fetch();
     
-    <!--Sidebar-->
-    <div class="col-md-4"> 
+      ?>
       
-      <!--Donate Box-->
-      <div class="charity-box has-margin-xs-bottom">
-        <div class="charity-desc">
-          <h2 class="pledged-amount has-no-margin">$6560.00</h2>
-          <p>Pledged of $15000 goal</p>
-          <div class="progress">
-            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%"><span class="sr-only">60% Complete</span>60%</div>
-          </div>
-          <div class="clearfix">
-            <div class="pull-left has-margin-xs-right">
-              <h3>24</h3>
-              <p>Backers</p>
-            </div>
-            <div class="pull-left">
-              <h3 class="pledged-amount">17</h3>
-              <p>Days left</p>
-            </div>
-          </div>
-          <div class="text-center has-margin-xs-top"> <a href="#" class="btn btn-lg btn-primary">Donate Now →</a> </div>
+      <!--SUBPAGE HEAD-->
+      
+      <div class="subpage-head" style="margin-bottom: 20px;">
+        <div class="container">
+          <h4><?= $donations['title']; ?></h4>
+          <h6 class="lead text-danger">Target Date:&nbsp; <?= $donations['target_date']; ?></h6>
         </div>
       </div>
-      <!--// END Donate Box-->
       
-      <div class="vertical-links has-margin-xs-bottom">
-        <h4>Campaign archives</h4>
-        <ul class="list-unstyled">
-          <li><a href="#">March 2014 <span class="badge pull-right">23</span> </a></li>
-          <li><a href="#">February 2014 <span class="badge pull-right">17</span> </a></li>
-          <li><a href="#">January 2014 <span class="badge pull-right">34</span> </a></li>
-          <li><a href="#">December 2013 <span class="badge pull-right">28</span> </a></li>
-          <li><a href="#">November 2013 <span class="badge pull-right">12</span> </a></li>
-          <li><a href="#">October 2013 <span class="badge pull-right">28</span> </a></li>
-        </ul>
+      <!-- // END SUBPAGE HEAD -->
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8 has-margin-bottom">
+            <div class="row">
+              <div class="col-12" style="margin-right: 15px; margin-left: 15px;">
+                <article class="blog-content">
+                  <img src="images/donation/<?= $donations['title']; ?>.<?= $donations['ext']; ?>" alt="charity donation" class="img-responsive has-margin-xs-bottom" style="width: 100%;">
+                  <p class= "text-justify"><?= $donations['details']; ?></p>
+                </article>
+              </div>
+            </div>
+          </div>
+          <!--// col md 9--> 
+          
+          <!--Sidebar-->
+          <div class="col-md-4"> 
+            
+            <!--Donate Box-->
+            <div class="charity-box has-margin-xs-bottom">
+              <div class="charity-desc">
+                <?php
+      
+                  $donation_id = $donations['id'];
+      
+                  $sql_transc = "
+                                  SELECT amount FROM transactions WHERE purpose = 'donation' && purpose_id = :id  && transc_status = 'on_going'
+                                ";
+      
+                  $pldg_amount = $conn->prepare($sql_transc);
+                  $pldg_amount->bindParam(':id', $donation_id);
+                  $pldg_amount->execute();
+      
+                  $pledged = 0;
+      
+                  while($pldg_resource = $pldg_amount->fetchColumn())
+                  {
+                    $pledged += $pldg_resource;
+                  }
+                  
+                  $prg_percent = ceil(abs($pledged/$donations['target_amount']) * 100);
+      
+      
+                ?>
+                <h2 class="pledged-amount has-no-margin">#<?php echo number_format($pledged); ?></h2>
+                <p>Pledged out of <span class="text-danger"> #<?= number_format($donations['target_amount']); ?></span> goal</p>
+                <div class="progress">
+                  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?= $prg_percent; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?= $prg_percent; ?>%"><span class="sr-only"><?= $prg_percent; ?>% Complete</span><?= $prg_percent; ?>%</div>
+                </div>
+                <div class="clearfix">
+                  <div>
+                    <?php
+                        $proposed_date = $donations['target_date'];
+      
+                        $proposed_date = strtotime($proposed_date);
+                        $currentTime = time();
+      
+                        $daysLeft = ceil(abs($proposed_date - $currentTime)/86400);
+                    ?>
+                    <h3 class="pledged-amount text-center text-danger"><?= $daysLeft; ?></h3>
+                    <p class="text-center text-danger">Days left</p>
+                  </div>
+                </div>
+                <div class="text-center has-margin-xs-top"> <a href="#" class="btn btn-lg btn-primary">Donate Now →</a> </div>
+              </div>
+            </div>
+            <!--// END Donate Box-->
+            
+            <div class="vertical-links has-margin-xs-bottom">
+              <h4>Other Donations</h4>
+              <?php
+      
+                $sql_donations = "
+                                    SELECT * FROM donation WHERE status = 'on_going'
+                                  ";
+      
+                $stmtAll = $conn->prepare($sql_donations);
+                $stmtAll->execute();
+      
+              ?>
+              <ul class="list-unstyled">
+                <?php
+                  while($allDonations1 = $stmtAll->fetch())
+                  {
+                  ?>
+                    <li><a href="charity-donation.php?searchDonationById=<?= $allDonations1['id']; ?>"><?= $allDonations1['title']; ?></a></li>
+                <?php
+                  }
+                ?>
+              </ul>
+            </div>
+            <div class="tag-cloud has-margin-bottom"> <a href="#">catholic</a> <a href="#">bulletin</a> <a href="#">programs</a> <a href="#">events</a> <a href="#">church</a> <a href="#">charity</a> <a href="#">website</a> <a href="#">template</a> <a href="#">non-profit</a> <a href="#">belief</a> <a href="#">ministry</a> <a href="#">sermon</a> <a href="#">nature</a> </div>
+          </div>
+        </div>
       </div>
-      <div class="tag-cloud has-margin-bottom"> <a href="#">catholic</a> <a href="#">bulletin</a> <a href="#">programs</a> <a href="#">events</a> <a href="#">church</a> <a href="#">charity</a> <a href="#">website</a> <a href="#">template</a> <a href="#">non-profit</a> <a href="#">belief</a> <a href="#">ministry</a> <a href="#">sermon</a> <a href="#">nature</a> </div>
-    </div>
-  </div>
-</div>
-<?php
-  include_once 'footer/footer.php';
-?>
+    <?php
+    }
+    elseif (!isset($_GET['searchDonationById']) && !empty($check)){
+        $result = $conn->query("SELECT * FROM donation WHERE status = 'on_going' LIMIT 1, 1");
+        $donations = $result->fetch();
 
-</body>
-</html>
+        include_once 'header/header2.php';
+      ?>
+          
+          <!--SUBPAGE HEAD-->
+          
+          <div class="subpage-head" style="margin-bottom: 20px;">
+            <div class="container">
+              <h4><?= $donations['title']; ?></h4>
+              <h6 class="lead text-danger">Target Date:&nbsp; <?= $donations['target_date']; ?></h6>
+            </div>
+          </div>
+          
+          <!-- // END SUBPAGE HEAD -->
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-md-8 has-margin-bottom">
+                <div class="row">
+                  <div class="col-12" style="margin-right: 15px; margin-left: 15px;">
+                    <article class="blog-content">
+                      <img src="images/donation/<?= $donations['title']; ?>.<?= $donations['ext']; ?>" alt="charity donation" class="img-responsive has-margin-xs-bottom" style="width: 100%;">
+                      <p class= "text-justify"><?= $donations['details']; ?></p>
+                    </article>
+                  </div>
+                </div>
+              </div>
+              <!--// col md 9--> 
+              
+              <!--Sidebar-->
+              <div class="col-md-4"> 
+                
+                <!--Donate Box-->
+                <div class="charity-box has-margin-xs-bottom">
+                  <div class="charity-desc">
+                    <?php
+          
+                      $donation_id = $donations['id'];
+          
+                      $sql_transc = "
+                                      SELECT amount FROM transactions WHERE purpose = 'donation' && purpose_id = :id  && transc_status = 'on_going'
+                                    ";
+          
+                      $pldg_amount = $conn->prepare($sql_transc);
+                      $pldg_amount->bindParam(':id', $donation_id);
+                      $pldg_amount->execute();
+          
+                      $pledged = 0;
+          
+                      while($pldg_resource = $pldg_amount->fetchColumn())
+                      {
+                        $pledged += $pldg_resource;
+                      }
+                      
+                      $prg_percent = ceil(abs($pledged/$donations['target_amount']) * 100);
+          
+          
+                    ?>
+                    <h2 class="pledged-amount has-no-margin">#<?php echo number_format($pledged); ?></h2>
+                    <p>Pledged out of <span class="text-danger"> #<?= number_format($donations['target_amount']); ?></span> goal</p>
+                    <div class="progress">
+                      <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?= $prg_percent; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?= $prg_percent; ?>%"><span class="sr-only"><?= $prg_percent; ?>% Complete</span><?= $prg_percent; ?>%</div>
+                    </div>
+                    <div class="clearfix">
+                      <div>
+                        <?php
+                            $proposed_date = $donations['target_date'];
+          
+                            $proposed_date = strtotime($proposed_date);
+                            $currentTime = time();
+          
+                            $daysLeft = ceil(abs($proposed_date - $currentTime)/86400);
+                        ?>
+                        <h3 class="pledged-amount text-center text-danger"><?= $daysLeft; ?></h3>
+                        <p class="text-center text-danger">Days left</p>
+                      </div>
+                    </div>
+                    <div class="text-center has-margin-xs-top"> <a href="#" class="btn btn-lg btn-primary">Donate Now →</a> </div>
+                  </div>
+                </div>
+                <!--// END Donate Box-->
+                
+                <div class="vertical-links has-margin-xs-bottom">
+                  <h4>Other Donations</h4>
+                  <?php
+          
+                    $sql_donations = "
+                                        SELECT * FROM donation WHERE status = 'on_going'
+                                      ";
+          
+                    $stmtAll = $conn->prepare($sql_donations);
+                    $stmtAll->execute();
+          
+                  ?>
+                  <ul class="list-unstyled">
+                    <?php
+                      while($allDonations = $stmtAll->fetch())
+                      {
+                      ?>
+                        <li><a href="charity-donation.php?searchDonationById=<?= $allDonations['id']; ?>"><?= $allDonations['title']; ?></a></li>
+                    <?php
+                      }
+                    ?>
+                  </ul>
+                </div>
+                <div class="tag-cloud has-margin-bottom"> 
+                  <a href="blog.php">bulletin</a> 
+                  <a href="events-programs.php">programs</a>
+                  <a href="events-programs.php">events</a> 
+                  <a href="index.php">church</a>
+                  <a href="charity-doantion.php">donation</a> 
+                  <a href="image-gallery.php">gallery</a> 
+                  <a href="#">audio messages</a>
+                  <a href="#">video messages</a> 
+                  <a href="about.php">about</a>
+                  <a href="contact.php">contact</a> 
+                </div>
+              </div>
+            </div>
+          </div>
+    <?php
+    }
+    else
+    {
+    ?>
+      <div class="subpage-head" style="margin-bottom: 20px;">
+        <div class="container">
+          <h4>Thank You for checking</h4>
+          <h6 class="lead text-danger">But there is no ongoing donation at the moment!!! <br /> <br /> Please check back later</h6>
+        </div>
+      </div>
+
+    <?php
+    }
+
+      include_once 'footer/footer.php';
+    ?>
+    
+    </body>
+    </html>

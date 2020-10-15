@@ -60,28 +60,32 @@
 <!--FEATURED BLOCK-->
 <div class="container">
   <div class="row feature-block">
-  <div class="col-12 section-title left-align-desktop">
-    <h4> RECENT SERMONS </h4>
-  </div>
-    <?php  
-      $message = $call->call_sermon();
+    <div class="col-xs-12 section-title left-align-desktop">
+      <h4> RECENT SERMONS </h4>
+    </div>
+      <?php  
+        $message = $call->call_sermon();
 
-      while ($messages = $message->fetch(PDO::FETCH_ASSOC)) 
-      {
-    ?>
-      <div class="col-md-4 col-sm-6 has-margin-bottom"> 
-        <div class="row">
-          <div class="col-12" style="height: 200px; width: 370px;">
-            <img class="img-fulid" src="<?php echo 'images/video/'.$messages['title'].'.'.$messages['ext']; ?>" style="height: 100%; width: 100%;"alt="church">
+        while ($messages = $message->fetch(PDO::FETCH_ASSOC)) 
+        {
+      ?>
+        <div class="col-xs-12 col-md-4 has-margin-bottom"> 
+          <div class="row">
+            <div class="col-xs-12">
+              <img class="img-fulid img-responsive" src="<?php echo 'images/video/'.$messages['title'].'.'.$messages['ext']; ?>" style="height: 100%; width: 100%;"alt="church">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12">
+              <h5><?= $messages['title']; ?></h5>
+              <p class="text-justify"><?php echo $messages['details']; ?></p>
+              <p><a href="about.php" role="button">View details →</a></p>
+            </div>
           </div>
         </div>
-        <h5><?= $messages['title']; ?></h5>
-        <p class="text-justify"><?php echo $messages['details']; ?></p>
-        <p><a href="about.php" role="button">View details →</a></p>
-      </div>
-    <?php
-      }
-    ?> 
+      <?php
+        }
+      ?> 
   </div>
 </div>
 <!-- // END FEATURED BLOCK--> 

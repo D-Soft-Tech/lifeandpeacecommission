@@ -1,5 +1,45 @@
 <?php
     session_start();
+
+    $alertMessage = "";
+    // Codes to redirect to payment page for shopping cart
+    if(isset($_POST['payCart']))
+    {
+        if(isset($_SESSION['username_frontEnd']))
+        {
+            $checker = $_POST['payCart'];
+
+            if($checker === "pay")
+            {
+                if(!empty($_SESSION['shoppingCart']))
+                {
+                   header('Location: payment.php');
+                }
+                else
+                {
+                    $alertMessage =    '<div class="alert alert-danger alert-dismissable mt-2" style="margin-right: 10%; margin-top: 10px; margin-bottom: 0px; margin-left: 10%;">'.
+                                                    '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
+                                                    '<div class="">'.
+                                                        '<h6><i class="fa fa-check"></i>&nbsp;&nbsp;&nbsp; You have no item in your shopping cart</h6>'.
+                                                    '</div>'.
+                                                '</div>';
+            
+                    // echo $shoppingCartDontExist;
+                }
+            }
+        }
+        else
+        {
+            $alertMessage = '<div class="alert alert-danger alert-dismissable mt-2" style="margin-right: 10%; margin-top: 10px; margin-bottom: 0px; margin-left: 10%;">'.
+                                '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
+                                '<div class="">'.
+                                    '<h6><i class="fa fa-check"></i>&nbsp;&nbsp;&nbsp; Sorry! You have to <a class="text-danger" href="logs.php"><b>Login</b></a> first</h6>'.
+                                '</div>'.
+                            '</div>';
+        
+            // echo $loginPrompt;
+        }  
+    }
 ?>
 
 <!DOCTYPE html>
@@ -62,7 +102,7 @@ The three most essential aspect of our family are: Sound Teachings, Sweet Fellow
             <li><a href="events-programs.php">Events &amp; Programs</a></li>
             <li><a href="event-calendar.php">Event Calendar</a></li>
             <li><a href="charity-donation.php">Charity &amp; Donations</a></li>
-            <li><a href="prayers.php">Testimonies</a></li>
+            <li><a href="testimony.php">Testimonies</a></li>
           </ul>
         </li>
         <li><a href="contact.php">Give Online</a></li>
@@ -136,16 +176,20 @@ The three most essential aspect of our family are: Sound Teachings, Sweet Fellow
         </div>
     </div>
 
+    <div id="alertMessageDiv" style="margin-bottom: 10px;">
+            <?= $alertMessage; ?>
+    </div>
+
     <div class="container has-margin-bottom">
         <div class="row">
             <div class="col-md-9 col-xs-12">
                 <div class="row">
                     <div class="col-xs-12 has-margin-bottom">
                         <div class="row">
-                            <div class="col-xs-12 col-md-3 container" id="book-top" style="border-right: 2px solid;">
-                                <img src="images/books/<?= $book_title; ?>.<?= $book_ext1; ?>" style="height: 300px; width: 100%;" alt="" class="image-responsive">
+                            <div class="col-xs-6 col-md-3 container" id="book-top" style="border-right: 2px solid;">
+                                <img src="images/books/<?= $book_title; ?>.<?= $book_ext1; ?>" style="height: 250px; width: 100%;" alt="" class="image-responsive">
                             </div>
-                            <div class="col-xs-12 col-md-9">
+                            <div class="col-xs-6 col-md-9">
                                 <div class="row">
                                     <div class="col-xs-12">
                                         <h6 Class="bg-success" style="padding: 10px;">Details</h6>
@@ -158,9 +202,9 @@ The three most essential aspect of our family are: Sound Teachings, Sweet Fellow
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-4"><button type="submit" class="btn-transition btn btn-success" title="buy now"><i class="fa fa-credit-card"></i></button></div>
-                                    <div class="col-md-4"><button type="submit" class="btn-transition btn btn-success" title="Add to cart"><i class="fa fa-cart-plus"></i></button></div>
-                                    <div class="col-md-4"><button type="submit" title="Go Back to Books" class="btn-transition btn btn-success"><i class="fa fa-arrow-left"></i></button></div>
+                                    <div class="col-xs-4"><button type="submit" class="btn-transition btn btn-success" title="buy now"><i class="fa fa-credit-card"></i></button></div>
+                                    <div class="col-xs-4"><button type="submit" class="btn-transition btn btn-success" title="Add to cart"><i class="fa fa-cart-plus"></i></button></div>
+                                    <div class="col-xs-4"><a  href="books.php" class="btn-link"><button title="Go Back to Books" class="btn-transition btn btn-success"><i class="fa fa-arrow-left"></i></button></a></div>
                                 </div>
                             </div>
                         </div>
@@ -184,10 +228,10 @@ The three most essential aspect of our family are: Sound Teachings, Sweet Fellow
                         <div class="row">
                             <div class="col-xs-5">
                                 <i class="fas fa-shopping-cart fa-2x"></i>&nbsp;
-                                <sup><span class="badge">0</span></sup>
+                                <sup><span id="shoppingCartBadge" class="badge">0</span></sup>
                             </div>
                             <div class="col-xs-7">
-                                <a href="payment.php" role="button" class="btn btn-success">pay</a>
+                            <form method="post"><input type="submit" class="btn btn-success" title="Pay for Cart" name="payCart" value="pay"></form>
                             </div>
                         </div>
                         <br />
@@ -231,5 +275,14 @@ The three most essential aspect of our family are: Sound Teachings, Sweet Fellow
   include_once 'footer/footer.php';
 ?>
 
+<script>
+
+    function showShoppingCart(id)
+    {
+        document.getElementById(id).innerHTML = <?php echo count($_SESSION['shoppingCart']); ?>;
+    }
+
+    setInterval("showShoppingCart('shoppingCartBadge')", 1000);
+</script>
 </body>
 </html>

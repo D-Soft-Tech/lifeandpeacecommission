@@ -7,7 +7,7 @@
 <div class="subpage-head has-margin-bottom">
   <div class="container">
     <h3>Event Calendar</h3>
-    <p class="lead">Event calendar integrated with Google Calendar</p>
+    <p class="lead">Event calendar of all our proposed programs and outreaches</p>
   </div>
 </div>
 

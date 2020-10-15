@@ -2,15 +2,21 @@
 
     require_once ('event_class.php');
 
-    if (isset($_POST['submit'])) 
+    if (isset($_POST['submitAddEvent'])) 
     {
         if (isset($_FILES) && isset($_POST))
         {  
             $theme = $_POST['theme'];
             $anchor = $_POST['anchor'];
             $details = $_POST['details'];
-            $event_from = $_POST['from'];
-            $event_to = $_POST['to'];
+
+            $event_from1 = strtotime($_POST['from']);
+            $event_from = date("l, F jS; Y", $event_from1);
+
+            
+            $event_to1 = strtotime($_POST['to']);
+            $event_to = date("l, F jS; Y", $event_to1);
+
             $event_time = $_POST['time'];
 
             $name = strtolower($_FILES['eventPicture']['name']);
@@ -155,7 +161,7 @@
                         </div>
                     </div>
                 </div>
-                <button type="submit" name="submit" value="submit" class="btn btn-primary block btm-sm btn-block mt-1">Save</button>
+                <button type="submit" name="submitAddEvent" value="submit" class="btn btn-primary block btm-sm btn-block mt-1">Save</button>
             </form>
         </div>
     </div>

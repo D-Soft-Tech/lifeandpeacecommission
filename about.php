@@ -77,8 +77,16 @@
     </div>
     <!-- /.col-md-4 --> 
   </div>
-</div>
 <!-- // END OUR TEAM --> 
+
+    <div class="col-12 has-margin-bottom">
+      <h4>Locate Us on the Globe</h4>
+    </div>
+</div>
+<!-- LOCATION MAP -->
+<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3956.707156579709!2d3.9813427497178786!3d7.386676824211546!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xbd047882cd5a5941!2sLife%20and%20Peace%20Commission!5e0!3m2!1sen!2sng!4v1602564445016!5m2!1sen!2sng" 
+width="100%" height="450" frameborder="0" style="border:0; margin-bottom: 15px;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+<!-- // END LOCATION MAP  -->
 <?php
   include_once 'footer/footer.php';
 ?>

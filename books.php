@@ -3,6 +3,8 @@
 
     require_once 'life/php/db.php';
 
+    $alertMessage = "";
+    
     $conn = get_DB();
 
     $limit = 5;
@@ -75,6 +77,85 @@
     }
     	
     $Next = nextArrow();
+
+    // Codes to redirect to payment page for shopping cart
+    if(isset($_POST['payCart']))
+    {
+        if(isset($_SESSION['username_frontEnd']))
+        {
+            $checker = $_POST['payCart'];
+
+            if($checker === "pay")
+            {
+                if(!empty($_SESSION['shoppingCart']))
+                {
+                   header('Location: payment.php');
+                }
+                else
+                {
+                    $alertMessage =    '<div class="alert alert-danger alert-dismissable mt-2" style="margin-right: 10%; margin-top: 10px; margin-bottom: 0px; margin-left: 10%;">'.
+                                                    '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
+                                                    '<div class="">'.
+                                                        '<h6><i class="fa fa-check"></i>&nbsp;&nbsp;&nbsp; You have no item in your shopping cart</h6>'.
+                                                    '</div>'.
+                                                '</div>';
+            
+                    // echo $shoppingCartDontExist;
+                }
+            }
+        }
+        else
+        {
+            $alertMessage = '<div class="alert alert-danger alert-dismissable mt-2" style="margin-right: 10%; margin-top: 10px; margin-bottom: 0px; margin-left: 10%;">'.
+                                '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
+                                '<div class="">'.
+                                    '<h6><i class="fa fa-check"></i>&nbsp;&nbsp;&nbsp; Sorry! You have to <a class="text-danger" href="logs.php"><b>Login</b></a> first</h6>'.
+                                '</div>'.
+                            '</div>';
+        
+            // echo $loginPrompt;
+        }  
+    }
+
+    // Add to Cart Code
+    if(isset($_POST['submitAddToCart']) && $_POST['submitAddToCart'] === "submitAddToCart")
+    {
+        if(isset($_SESSION['username_frontEnd']))
+        {
+            $book_id = $_POST['addToCartBookId'];
+            $book_name = $_POST['addToCartBookTitle'];
+
+            if(in_array($book_id, $_SESSION['shoppingCart']))
+            {
+                $alertMessage =     '<div class="alert alert-info alert-dismissable mt-2" style="margin-right: 10%; margin-top: 10px; margin-bottom: 0px; margin-left: 10%;">'.
+                                        '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
+                                        '<div class="">'.
+                                            '<h6><i class="fa fa-check"></i>&nbsp;&nbsp;&nbsp; The book already exists in your cart</h6>'.
+                                        '</div>'.
+                                    '</div>';
+            }
+            else
+            {
+                $_SESSION['shoppingCart'][] = $book_id;
+
+                $alertMessage =     '<div class="alert alert-success alert-dismissable mt-2" style="margin-right: 10%; margin-top: 10px; margin-bottom: 0px; margin-left: 10%;">'.
+                                        '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
+                                        '<div class="">'.
+                                            '<h6><i class="fa fa-check"></i>&nbsp;&nbsp;&nbsp; The book has been added to your cart</h6>'.
+                                        '</div>'.
+                                    '</div>';
+            }
+        }
+        else
+        {
+            $alertMessage = '<div class="alert alert-danger alert-dismissable mt-2" style="margin-right: 10%; margin-top: 10px; margin-bottom: 0px; margin-left: 10%;">'.
+                                '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
+                                '<div class="">'.
+                                    '<h6><i class="fa fa-check"></i>&nbsp;&nbsp;&nbsp; Sorry! You have to <a href="logs.php" class="text-danger"><b>Login</b></a> first</h6>'.
+                                '</div>'.
+                            '</div>';
+        }  
+    }
 ?>
 
 <!DOCTYPE html>
@@ -137,7 +218,7 @@ The three most essential aspect of our family are: Sound Teachings, Sweet Fellow
             <li><a href="events-programs.php">Events &amp; Programs</a></li>
             <li><a href="event-calendar.php">Event Calendar</a></li>
             <li><a href="charity-donation.php">Charity &amp; Donations</a></li>
-            <li><a href="prayers.php">Testimonies</a></li>
+            <li><a href="testimony.php">Testimonies</a></li>
           </ul>
         </li>
         <li><a href="contact.php">Give Online</a></li>
@@ -145,32 +226,32 @@ The three most essential aspect of our family are: Sound Teachings, Sweet Fellow
         <?php
             function href()
             {
-            if(!isset($_SESSION['username_frontEnd']) && !isset($_SESSION['password_frontEnd']))
-            {
-            echo "<li class='dropdown'>". 
-                    "<a href='logs.php'>".
-                        "<b>Login</b>".
-                    "</a>".
-                    "</li>";
-            }
-            else
-            {
-                echo '<li><a href="#" class="dropdown-toggle" data-toggle="dropdown"><b>'.$_SESSION['username_frontEnd'].'<span class="caret"></span></b></a>';
-            }
+                if(!isset($_SESSION['username_frontEnd']) && !isset($_SESSION['password_frontEnd']))
+                {
+                echo "<li class='dropdown'>". 
+                        "<a href='logs.php'>".
+                            "<b>Login</b>".
+                        "</a>".
+                        "</li>";
+                }
+                else
+                {
+                    echo '<li><a href="#" class="dropdown-toggle" data-toggle="dropdown"><b>'.$_SESSION['username_frontEnd'].'<span class="caret"></span></b></a>';
+                }
             }
 
             href();
 
             function is_loggedIn()
             {
-            if(isset($_SESSION['username_frontEnd']) && isset($_SESSION['password_frontEnd']))
-            {
-                echo  '<ul class="dropdown-menu dropdown-menu-left" role="menu">'.
-                        '<li>'.
-                        '<a href="" class="mr-0 pr-0 dropdown-item" data-toggle="modal" data-target="#loginModal"><b>Log out</b></a>'.
-                        '</li>'.
-                    '</ul>';
-            }
+                if(isset($_SESSION['username_frontEnd']) && isset($_SESSION['password_frontEnd']))
+                {
+                    echo    '<ul class="dropdown-menu dropdown-menu-left" role="menu">'.
+                                '<li>'.
+                                '<a href="" class="mr-0 pr-0 dropdown-item" data-toggle="modal" data-target="#loginModal"><b>Log out</b></a>'.
+                                '</li>'.
+                            '</ul>';
+                }
             }
 
             is_loggedIn();
@@ -196,6 +277,7 @@ The three most essential aspect of our family are: Sound Teachings, Sweet Fellow
     </div>
 
     <div id="alertMessageDiv">
+        <?= $alertMessage; ?>
     </div>
 
     <div class="ml-5 row mt-0 text-center" style="margin-top: 0px;">
@@ -231,17 +313,21 @@ The three most essential aspect of our family are: Sound Teachings, Sweet Fellow
             <div class="col-md-9 col-xs-12 has-margin-bottom">
                 <?php foreach($books as $books) :  ?>
                 <div class="row">
-                    <div class="col-md-2 col-xs-6 mx-1">
+                    <div class="col-md-2 col-xs-4 mx-1">
                         <div class="text-center" id="book-top">
                             <img class="img-resoponsive" src="images/books/<?= $books['book_title']; ?>.<?= $books['ext']; ?>" alt="<?= $books['book_title']; ?>" style="height: 200px; width: 100%;">
                             <h6 class="text-center"><?= $books['price']; ?></h6>
                             <div class="overlay">
-                                <button class="btn btn-secondary" onclick="addToCart('<?= $books['book_id']; ?>', '<?= $books['book_title']; ?>')" title="Add to Cart"><i class="fas fa-shopping-cart"></i></button>
-                                <button class="btn btn-secondary" title="Buy now"><a href="bookDetails.php?book_id=<?= $books['book_id']; ?>&book_description=<?= $books['book_description'];?>&book_price=<?= $books['price'];?>&book_volume=<?= $books['volume'];?>&book_page=<?= $books['page_count'];?>&book_title=<?= $books['book_title'];?>&book_ext1=<?= $books['ext'];?>&book_ext2=<?= $books['ext2'];?>"> <i class="fas fa-eye"></i></a></button>
+                                <form action="books.php" method="POST">
+                                    <input type="text" name="addToCartBookId" value="<?= $books['book_id']; ?>" hidden>
+                                    <input type="text" name="addToCartBookTitle" value="<?= $books['book_title']; ?>" hidden>
+                                    <button type="submit" class="btn btn-secondary" name="submitAddToCart" value="submitAddToCart" title="Add to Cart"><i class="fas fa-shopping-cart"></i></button>
+                                </form>
+                                <button class="btn btn-secondary" title="Buy now"><a href="bookDetails.php?book_id=<?= $books['book_id']; ?>&book_description=<?= $books['book_description'];?>&book_price=<?= $books['price'];?>&book_volume=<?= $books['volume'];?>&book_page=<?= $books['page_count'];?>&book_title=<?= $books['book_title'];?>&book_ext1=<?= $books['ext'];?>&book_ext2=<?= $books['ext2'];?>"><i class="fas fa-eye"></i></a></button>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-10 col-xs-6 ml-3">
+                    <div class="col-md-10 col-xs-8 ml-3">
                         <h5 class=""><?= $books['book_title']; ?></h5>
                         <p class="card-text text-justify">
                         <?= $books['book_description']; ?> <a href="bookDetails.php?book_id=<?= $books['book_id']; ?>&book_description=<?= $books['book_description'];?>&book_price=<?= $books['price'];?>&book_volume=<?= $books['volume'];?>&book_page=<?= $books['page_count'];?>&book_title=<?= $books['book_title'];?>&book_ext1=<?= $books['ext'];?>&book_ext2=<?= $books['ext2'];?>">&nbsp;Read more →</a>
@@ -262,10 +348,10 @@ The three most essential aspect of our family are: Sound Teachings, Sweet Fellow
                     <div class="row">
                         <div class="col-xs-5">
                             <i class="fas fa-shopping-cart fa-2x"></i>&nbsp;
-                            <sup><span class="badge">0</span></sup>
+                            <sup><span id="shoppingCartBadge" class="badge">0</span></sup>
                         </div>
                         <div class="col-xs-7">
-                            <a href="payment.php" role="button" class="btn btn-success">pay</a>
+                            <form action="books.php" method="post"><input type="submit" class="btn btn-success" title="Pay for Cart" name="payCart" value="pay"></form>
                         </div>
                     </div>
                     <br />
@@ -311,38 +397,18 @@ The three most essential aspect of our family are: Sound Teachings, Sweet Fellow
 <script src="ajax_class.js"></script>
 
 <script>
-    function addToCart(id, name)
+
+    function showShoppingCart(id)
     {
-        var book_id = id;
-        XmlHttp
-        (
-            {   
-                url: 'books.php',
-                type: 'POST',
-                data: "addToCartId="+book_id+"&addToCartName="+name,
-                complete:function(xhr,response,status)
-                {   
-                   document.getElementById("alertMessageDiv").innerHTML = response; 
-                }
-            }
-        );
+        document.getElementById(id).innerHTML = '<?php echo count($_SESSION['shoppingCart']); ?>';
     }
+
+    setInterval("showShoppingCart('shoppingCartBadge')", 1000);
+
 </script>
 </body>
 </html>
 
 <?php
-    if(isset($_POST['addToCartId'])){
-        $book_id = $_POST['addToCartId'];
-        $book_name = $_POST['addToCartName'];
-
-        $message =  '<div class="alert alert-success alert-dismissable mt-2" style="margin-right: 10%; margin-top: 10px; margin-bottom: 0px; margin-left: 10%;">'.
-                        '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
-                        '<div class="">'.
-                            '<h6><i class="fa fa-check"></i>&nbsp;&nbsp;&nbsp; The book has been added to your cart</h6>'.
-                        '</div>'.
-                    '</div>';
-        
-        echo $message;
-    } 
+    
 ?>

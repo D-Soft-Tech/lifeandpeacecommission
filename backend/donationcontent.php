@@ -2,7 +2,7 @@
 
     require_once ('donation_class.php');
 
-    if (isset($_POST['submit'])) 
+    if (isset($_POST['submitAddDonation'])) 
     {
         if (isset($_FILES) && isset($_POST))
         {  
@@ -168,7 +168,7 @@
                     </label>
                     <input type="file" class="form-control" name="donationPicture" id="donationPicture">
                 </div>
-                <button type="submit" name="submit" value="submit" class="btn btn-primary block btm-sm btn-block mt-1">Save</button>
+                <button type="submit" name="submitAddDonation" value="submit" class="btn btn-primary block btm-sm btn-block mt-1">Save</button>
             </form>
         </div>
     </div>

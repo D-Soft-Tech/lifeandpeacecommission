@@ -235,6 +235,7 @@
                     $_SESSION['username_frontEnd'] = $userDetails['username'];
                     $_SESSION['address_frontEnd'] = $userDetails['address'];
                     $_SESSION['password_frontEnd'] = $userDetails['password'];
+                    $_SESSION['shoppingCart'] = array();
 
                     if(!empty($_SESSION['username_frontEnd']))
                     {
@@ -306,6 +307,8 @@
                     $_SESSION['email_frontEnd'] = $email;
                     $_SESSION['username_frontEnd'] = $username;
                     $_SESSION['address_frontEnd'] = $address;
+                    $_SESSION['password_frontEnd'] = $password;
+                    $_SESSION['shoppingCart'] = array();
 
                     echo    '<div style="padding-right: 10%; padding-left: 10%;">'.
                                 '<div class="col-sm-12 alert alert-success alert-dismissable">'.

@@ -2,7 +2,7 @@
 
     require_once ('gallery_class.php');
 
-    if (isset($_POST['submit'])) 
+    if (isset($_POST['submitNewPhoto'])) 
     {
         if (isset($_FILES) && isset($_POST))
         {  
@@ -10,7 +10,7 @@
 
             $name = strtolower($_FILES['photo']['name']);
 
-            $day = date("l"); $month = date("F"); $year = date("Y");
+            $date = date('jS'); $dayOfWeek = date("l"); $day=$dayOfWeek . " $date of "; $month = date("F"); $year = date("Y");
 
             $splitted = explode(".", $name);
             $ext = end($splitted);
@@ -170,7 +170,7 @@
                         <input type="file" name="photo" class="form-control" id="photo">
                     </div>
                 </div>
-                <button type="submit" name="submit" value="submit" class="btn btn-primary btm-sm btn-block">Upload</button>
+                <button type="submit" name="submitNewPhoto" value="submit" class="btn btn-primary btm-sm btn-block">Upload</button>
             </form>
         </div>
     </div>

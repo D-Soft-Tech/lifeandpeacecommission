@@ -1,137 +1,238 @@
 <?php
+
+  include_once 'life/php/db.php';
   include_once 'header/header.php';
+
+  $conn = get_DB();
+
+  if(isset($_GET) && !empty($_GET))
+  {
+    $sanitizer = filter_var_array($_GET, FILTER_SANITIZE_STRING);
+
+    $idA = $sanitizer['articleID'];
+  }
+
+  $alertMessage = "";
+
+  function disable_button()
+  {
+    if(isset($_SESSION['username_frontEnd']) && isset($_SESSION['password_frontEnd']) && !empty($_SESSION['username_frontEnd']) && !empty($_SESSION['password_frontEnd']))
+    {
+        echo "value='submit' name='submitAddComment' type='submit'";
+    }
+    else{
+        echo "data-toggle='tooltip' value='Submit' data-placement='right' type='button' title='You have to login first'";
+    }
+  }
+
+  if(isset($_POST['submitAddComment']) && $_POST['submitAddComment'] === "submit")
+  {
+    $commentator = $_SESSION['username_frontEnd'];
+
+    $userID_resource = $conn->query("SELECT user_id FROM users WHERE username = '$commentator'");
+    $userID = $userID_resource->fetch();
+    
+    $sanitizer = filter_var_array($_POST, FILTER_SANITIZE_STRING);
+
+    $comment = $sanitizer['comment'];
+
+    $date = date("l, F jS, Y");
+
+    if(!empty($commentator) && !empty($comment))
+    {
+      $sqlComment = "
+                        INSERT INTO comments set obj_id = :obj_id, comment = :comment, date_added = :date, user_id = :user_id 
+                      ";
+
+      $stmt1 = $conn->prepare($sqlComment);
+      $stmt1->bindValue(':obj_id', $idA);
+      $stmt1->bindValue(':comment', $comment);
+      $stmt1->bindValue(':date', $date);
+      $stmt1->bindValue(':user_id', $userID['user_id']);
+
+      $check = $stmt1->execute();
+
+      $count = $stmt1->rowCount();
+
+      if($check === true && $count>0)
+      {
+        $alertMessage = '<div class="alert alert-success alert-dismissable mt-2" style="margin-right: 10%; margin-top: 10px; margin-bottom: 0px; margin-left: 10%;">'.
+                            '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
+                            '<div class="">'.
+                                '<h6><i class="fa fa-check"></i>&nbsp;&nbsp;&nbsp; Thank you, your Comment has been received!!!</h6>'.
+                            '</div>'.
+                        '</div>';
+      }
+      else
+      {
+        $alertMessage = '<div class="alert alert-danger alert-dismissable mt-2" style="margin-right: 10%; margin-top: 10px; margin-bottom: 0px; margin-left: 10%;">'.
+                            '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
+                            '<div class="">'.
+                                '<h6><i class="fa fa-check"></i>&nbsp;&nbsp;&nbsp; Error sending the Comment, please try again later!!!</h6>'.
+                            '</div>'.
+                        '</div>';
+      }
+    }
+    else
+      {
+        $alertMessage = '<div class="alert alert-danger alert-dismissable mt-2" style="margin-right: 10%; margin-top: 10px; margin-bottom: 0px; margin-left: 10%;">'.
+                            '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
+                            '<div class="">'.
+                                '<h6><i class="fa fa-check"></i>&nbsp;&nbsp;&nbsp; Error o sending the Comment, please try again later!!!</h6>'.
+                            '</div>'.
+                        '</div>';
+      }
+  }
+
+  if(isset($_GET) && !empty($_GET))
+  {
+    $sanitizer = filter_var_array($_GET, FILTER_SANITIZE_STRING);
+
+    $id = $sanitizer['articleID'];
+
+    // Getting the Article from the database using the id that was sent in from blog.php
+
+    $sqlArticle = "
+                    SELECT * FROM articles WHERE articles_id = :articles_id
+                  ";
+
+    $stmt = $conn->prepare($sqlArticle);
+    $stmt->bindParam(':articles_id', $id);
+    $stmt->execute();
+
+    $article = $stmt->fetch();
+
+    $commentsSql = "
+                  SELECT comments.comment AS comment, comments.date_added AS date_added, users.full_name AS full_name FROM comments, users WHERE comments.obj_id = :id
+                  && comments.obj = 'articles' && comments.user_id = users.user_id && comments.status = 'read'
+                ";
+
+    $stmt2 = $conn->prepare($commentsSql);
+    $stmt2->bindParam(':id', $id);
+    $stmt2->execute();
+
+    $comments = $stmt2->fetchAll();
+    $totalComments = $stmt2->rowCount();
+
+    if(!empty($article) && $article !== null)
+    {
+    ?>
+      <!--SUBPAGE HEAD-->
+
+      <div class="subpage-head has-margin-bottom">
+        <div class="container">
+          <h3><?= $article['article_title'] ?> </h3>
+          <p class="lead">Posted on <?= $article['date_added'] ?> by <a class="link-reverse"><?= $article['article_author']; ?></a></p>
+        </div>
+      </div>
+
+      <!-- // END SUBPAGE HEAD -->
+
+      <div class="container">
+        <div class="row">
+
+        <!-- Alert div for showing if the comment is successfully sent or not -->
+          <div class="col-md-12">
+            <div class="row">
+              <?= $alertMessage; ?>
+            </div>
+          </div>
+
+          <div class="col-md-9 has-margin-bottom">
+            <article class="blog-content">
+              <p class="text-justify">
+                <?= $article['article_details']; ?>
+              </p>
+            </article>
+            <section class="comments-block">
+
+              <!-- Getting the comments on the article posted -->
+              <h3 class="comments-head"><?= $totalComments; ?> Comments</h3>
+
+              <?php foreach($comments as $comments) : ?>
+                <div class="media"> <a class="pull-left" href="#"> <img class="media-object" alt="avatar" src="images/avatar-1.jpg"> </a>
+                  <div class="media-body">
+                    <h6 class="media-heading"><?= $comments['full_name']; ?></h6>
+                    <p class="text-muted"><?= $comments['date_added']; ?></p>
+                     <?= $comments['comment'] ?>
+                  </div>
+                </div>
+              <?php endforeach; ?>
+            </section>
+            <section class="post-comment-form">
+              <h3 class="comments-head">Add your Comment</h3>
+              <form class="form" method="POST" role="form">
+                <div class="row">
+                  <div class="form-group col-md-12">
+                    <textarea cols="8" rows="4" name="comment" class="form-control input-lg" placeholder="Your Comment" required></textarea>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-12">
+                    <input class="btn btn-primary btn-lg" <?php disable_button(); ?>>
+                  </div>
+                </div>
+              </form>
+            </section>
+          </div>
+          <!--// col md 9--> 
+          
+          <!--Blog Sidebar-->
+          <div class="col-md-3">
+            <div class="well">
+              <h4>About</h4>
+              <p class="text-justify">Here is a list of articles writtten under the inspiration of the Holy Ghost. They address various issues that 
+                are impossible for us to be confronted with during our sourjourning here on earth.
+                <br /> <b>Please do well to read them.</b>
+              </p>
+            </div>
+            <div class="vertical-links has-margin-xs-bottom">
+              <h4>Blog archives</h4>
+              <?php
+          
+                $sql_donations = "
+                                    SELECT * FROM articles ORDER BY articles_id DESC LIMIT 10
+                                  ";
+
+                $stmtAll = $conn->prepare($sql_donations);
+                $stmtAll->execute();
+
+              ?>
+              <ul class="list-unstyled">
+                <?php
+                  while($lsArticles = $stmtAll->fetch())
+                  {
+                  ?>
+                    <li><a href="blog-single.php?articleID=<?= $lsArticles['articles_id']; ?>"><?= $lsArticles['article_title']; ?></a></li>
+                <?php
+                  }
+                ?>
+              </ul>
+            </div>
+            <div class="tag-cloud has-margin-bottom"> 
+              <a href="blog.php">bulletin</a> 
+              <a href="events-programs.php">programs</a>
+              <a href="events-programs.php">events</a> 
+              <a href="index.php">church</a>
+              <a href="charity-doantion.php">donation</a> 
+              <a href="image-gallery.php">gallery</a> 
+              <a href="#">audio messages</a>
+              <a href="#">video messages</a> 
+              <a href="about.php">about</a>
+              <a href="contact.php">contact</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    <?php
+    }
+  }
 ?>
 
-<!--SUBPAGE HEAD-->
-
-<div class="subpage-head has-margin-bottom">
-  <div class="container">
-    <h3>Perseverance of the Saints </h3>
-    <p class="lead">on 17th June 2014 by <a href="#" class="link-reverse">Vincent John</a></p>
-  </div>
-</div>
-
-<!-- // END SUBPAGE HEAD -->
-
-<div class="container">
-  <div class="row">
-    <div class="col-md-9 has-margin-bottom">
-      <article class="blog-content">
-        <p class="lead">Aenean lacinia bibendum nulla sed consectetur. Etiam porta sem malesuada magna mollis euismod. Fusce dapibus, tellus ac cursus commodo.</p>
-        <p>Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>
-        <p>Cum sociis natoque penatibus et magnis <a href="#">dis parturient montes</a>, nascetur ridiculus mus. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Sed posuere consectetur est at lobortis. Cras mattis consectetur purus sit amet fermentum.</p>
-        <blockquote>
-          <p>Curabitur blandit tempus porttitor. <strong>Nullam quis risus eget urna mollis</strong> ornare vel eu leo. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-        </blockquote>
-        <p>Etiam porta <em>sem malesuada magna</em> mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p>
-        <p>Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>
-        <h4>Sub-heading</h4>
-        <p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>
-        <p>Aenean lacinia bibendum nulla sed consectetur. Etiam porta sem malesuada magna mollis euismod. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa.</p>
-        <h6>Another heading</h6>
-        <p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aenean lacinia bibendum nulla sed consectetur. Etiam porta sem malesuada magna mollis euismod. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-        <ul>
-          <li>Praesent commodo cursus magna, vel scelerisque nisl consectetur et.</li>
-          <li>Donec id elit non mi porta gravida at eget metus.</li>
-          <li>Nulla vitae elit libero, a pharetra augue.</li>
-        </ul>
-        <p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aenean lacinia bibendum nulla sed consectetur. Etiam porta sem malesuada magna mollis euismod. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-        <p>Penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aenean lacinia bibendum nulla sed consectetur. Etiam porta sem malesuada magna mollis euismod. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-      </article>
-      <section class="comments-block">
-        <h3 class="comments-head">4 Comments</h3>
-        <div class="media"> <a class="pull-left" href="#"> <img class="media-object" alt="avatar" src="images/avatar-1.jpg"> </a>
-          <div class="media-body">
-            <h6 class="media-heading">James Norton</h6>
-            <p class="text-muted">Aug 10, 2014 at 10:20 am</p>
-            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus. </div>
-        </div>
-        <div class="media"> <a class="pull-left" href="#"> <img class="media-object" alt="avatar" src="images/avatar-2.jpg"> </a>
-          <div class="media-body">
-            <h4 class="media-heading">Mark Johns</h4>
-            <p class="text-muted">Aug 10, 2014 at 10:20 am</p>
-            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-            <div class="media"> <a class="pull-left" href="#"> <img class="media-object" alt="avatar" src="images/avatar-1.jpg"> </a>
-              <div class="media-body">
-                <h4 class="media-heading">John Doe</h4>
-                <p class="text-muted">Aug 10, 2014 at 10:20 am</p>
-                Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus. </div>
-            </div>
-          </div>
-        </div>
-        <div class="media"> <a class="pull-left" href="#"> <img class="media-object" alt="avatar" src="images/avatar-1.jpg"> </a>
-          <div class="media-body">
-            <h4 class="media-heading">James Norton</h4>
-            <p class="text-muted">Aug 10, 2014 at 10:20 am</p>
-            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus. </div>
-        </div>
-      </section>
-      <section class="post-comment-form">
-        <h3 class="comments-head">Add your comment</h3>
-        <form class="form" role="form">
-          <div class="row">
-            <div class="form-group col-md-4 col-sm-4">
-              <input type="text" class="form-control input-lg" placeholder="Your name">
-            </div>
-            <div class="form-group col-md-4 col-sm-4">
-              <input type="email" class="form-control input-lg" placeholder="Your email">
-            </div>
-            <div class="form-group col-md-4 col-sm-4">
-              <input type="url" class="form-control input-lg" placeholder="Website (optional)">
-            </div>
-          </div>
-          <div class="row">
-            <div class="form-group col-md-12">
-              <textarea cols="8" rows="4" class="form-control input-lg" placeholder="Your comment"></textarea>
-            </div>
-          </div>
-          <div class="row">
-            <div class="form-group col-md-12">
-              <button type="submit" class="btn btn-primary btn-lg">Submit your comment</button>
-            </div>
-          </div>
-        </form>
-      </section>
-    </div>
-    <!--// col md 9--> 
-    
-    <!--Blog Sidebar-->
-    <div class="col-md-3">
-      <div class="blog-search has-margin-xs-bottom">
-        <div class="input-group input-group-lg">
-          <input type="text" class="form-control" placeholder="Search..">
-          <span class="input-group-btn">
-          <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-search glyphicon-lg"></i></button>
-          </span> </div>
-      </div>
-      <div class="well">
-        <h4>About</h4>
-        <p>Etiam porta <em>sem malesuada magna</em> mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p>
-      </div>
-      <div class="vertical-links has-margin-xs-bottom">
-        <h4>Blog archives</h4>
-        <ul class="list-unstyled">
-          <li><a href="#">March 2014 <span class="badge pull-right">23</span> </a></li>
-          <li><a href="#">February 2014 <span class="badge pull-right">17</span> </a></li>
-          <li><a href="#">January 2014 <span class="badge pull-right">34</span> </a></li>
-          <li><a href="#">December 2013 <span class="badge pull-right">28</span> </a></li>
-          <li><a href="#">November 2013 <span class="badge pull-right">12</span> </a></li>
-          <li><a href="#">October 2013 <span class="badge pull-right">28</span> </a></li>
-        </ul>
-      </div>
-      <div class="tag-cloud has-margin-bottom"><a href="#">programs</a> <a href="#">events</a> <a href="#">church</a> <a href="#">charity</a> <a href="#">website</a> <a href="#">template</a> <a href="#">non-profit</a> <a href="#">belief</a> <a href="#">ministry</a> <a href="#">sermon</a> <a href="#">nature</a> </div>
-    </div>
-  </div>
-</div>
-
 <?php
-  include_once 'signupModal.php';
   include_once 'footer/footer.php';
 ?>
 
-<?php
-include_once 'backend/php/db.php';
-include_once 'new.php';
-?>
 </body>
 </html>

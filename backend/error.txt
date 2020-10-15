@@ -6,3 +6,5 @@ Wednesday October 7th, 2020 (4:13pm):- SQLSTATE[HY000] [2002] No connection coul
 
 Wednesday October 7th, 2020 (4:13pm):- SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it.
 
+Sunday October 11th, 2020 (12:34pm):- SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo failed: No such host is known. 
+Sunday October 11th, 2020 (12:35pm):- SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo failed: No such host is known. 

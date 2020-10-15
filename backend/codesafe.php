@@ -302,6 +302,13 @@
       }
     </script>
   </body>
+
+  church template location icon
+  <span class="glyphicon glyphicon-map-marker"></span> Melbourne</div>
+
+  
+  <div class="text-center has-margin-xs-top"><a class="btn btn-primary btn-lg" href="#" role="button">Join event →</a></div>
+
 </html>
 
 
@@ -345,4 +352,62 @@ password: 021533dc36bd794
 
 port: this is always 3306
 
-mysql -ub39783f939332b -p -hus-cdbr-east-02.cleardb.com heroku_be5ce62eb396741 < C:\Users\Dell\Desktop\newLifeAndPeace.sql
+mysql -hus-cdbr-east-02.cleardb.com -ub39783f939332b -p heroku_be5ce62eb396741 < C:\Users\Dell\Desktop\newLifeAndPeace.sql
+
+
+https://youtu.be/EbaKNvWeHMg
+
+https://youtu.be/EbaKNvWeHMg
+
+
+
+<style>
+                @media (max-width:300px) {
+                    #height {
+                        height: 200px;
+                    }
+                    .image-responsive{
+                        height: 200px;
+                    }
+                }
+                @media (max-width: 500px){
+                    .image-responsive{
+                        height: 150px;
+                        width: 100px;
+                    }
+                    #height{
+                        height: 150px;
+                        width: 250px;
+                    }
+                }
+                @media (min-width: 550px){
+                    #height{
+                        max-height: 200px;
+                    }
+                }
+
+                #pay a{
+                    width: 30%; 
+                    background-color: white; 
+                    border: 2px solid #449D44;
+                }
+                #pay a:hover{
+                    background-color: #DFF0D8;
+                }
+            </style>
+
+
+
+    my google map api key
+
+AIzaSyCQnBM0iTEtxw9NbUZbLifn96sv5RCgCAY
+
+inline locale_get_display_language
+<script async defer
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCQnBM0iTEtxw9NbUZbLifn96sv5RCgCAY&callback=initMap">
+</script>
+
+map = new google.maps.Map(document.getElementById('map'), {
+  center: {lat: -34.397, lng: 150.644},
+  zoom: 8
+});
