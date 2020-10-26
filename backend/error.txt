@@ -1918,3 +1918,4 @@ Monday October 26th, 2020 (2:45am):- SQLSTATE[HY000] [2002] php_network_getaddre
 Monday October 26th, 2020 (2:45am):- SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo failed: No such host is known. 
 Monday October 26th, 2020 (2:45am):- SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo failed: No such host is known. 
 Monday October 26th, 2020 (2:47am):- SQLSTATE[HY000] [2006] MySQL server has gone away
+Monday October 26th, 2020 (2:54am):- SQLSTATE[HY000] [2006] MySQL server has gone away
