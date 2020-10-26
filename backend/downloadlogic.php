@@ -10,6 +10,11 @@ if (isset($_POST['download']) && isset($_POST['downLoadNow']) && !empty($_POST['
 
     $filepath = 'books/' . $book_Title.'.'.$book_Format;
 
+    // $sqlRefCheck = "
+    //                     SELECT refCodeStatus FROM transactions WHERE purpose = 
+    //                 ";
+
+
     if (file_exists($filepath))
     {
         // header('Cache-Control: public');
@@ -29,9 +34,18 @@ if (isset($_POST['download']) && isset($_POST['downLoadNow']) && !empty($_POST['
         $updateQuery = "UPDATE transactions SET transc_status='completed' WHERE purpose = 'books' && purpose_id = '$book_Id' && reference = '$refCode'";
         if($conn->query($updateQuery) && $conn->query($updateQuery)->rowCount >=0)
         {
+            unset($_SESSION['shoppingCart']);
+            unset($refCode);
+
             readfile($filepath);
+            
+            exit;
         }
         else{
+
+            unset($_SESSION['shoppingCart']);
+            unset($refCode);
+
             $response =     '<div class="alert alert-danger alert-dismissable mt-2" style="margin-right: 10%; margin-top: 10px; margin-bottom: 0px; margin-left: 10%;">'.
                                 '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
                                 '<div class="">'.

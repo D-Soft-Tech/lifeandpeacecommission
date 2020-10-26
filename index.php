@@ -270,6 +270,7 @@
             <blockquote class="blockquote-centered">
                 Spirituality and Diversity
                 <small>Ephesians 4 : 12</small>
+                <a class="btn btn-primary" href="focus_for_the_month.php" role="button">Read More →</a> 
             </blockquote>
           </div>
           <div class="item">

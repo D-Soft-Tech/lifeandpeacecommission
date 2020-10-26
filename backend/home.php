@@ -33,6 +33,7 @@
                     <title>Admin Dashboard - Mount Zion Fortres</title>
                     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
                     <meta name="msapplication-tap-highlight" content="no">
+                    <link rel="stylesheet" href="../assets/forala/css/froala_editor.pkgd.min.css">
                     <link href="./main.css" rel="stylesheet">
                     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
                     <script type="text/javascript">
@@ -472,11 +473,29 @@
                             </div>
                         <!-- /Main Content Ends here -->
                     </div>
+                    <script type="text/javascript" src="../assets/bootstrap-4.4.1-dist/js/jquery.js"></script>
+                    <script type="text/javascript" src="../assets/bootstrap-4.4.1-dist/js/bootstrap.js"></script>
+                    <script type="text/javascript" src="../assets/forala/js/froala_editor.pkgd.min.js"></script>
                     <script type="text/javascript" src="./assets/scripts/main.js"></script>
                     <script type="text/javascript" src="../ajax_class.js"></script>
-                    
-                    <script>
-                        var forala = new FroalaEditor('textarea');
+
+                    <script type="text/javascript">
+                        $(document).ready(function (){
+
+                            $('#editFocusForTheMonth').click(function (){
+                                var title = document.getElementById("focusForTheMonthTitle").innerHTML;
+                                var details = document.getElementById("focusForTheMonthDetails").innerHTML;
+                                var scripture = document.getElementById("anchorScript").innerHTML;
+
+                                $('#focusTheme').val(title);
+                                $('#scripturalAnchor').val(scripture);
+                                $('#focusDetails').val(details);
+
+                                var forala = new FroalaEditor('textarea');
+                                
+                                $('#focusForTheMonth').modal('show');
+                            });
+                        });
                     </script>
                     </body>
                 </html>
