@@ -114,8 +114,7 @@ else
                                         transactions WHERE transactions.purpose = 'books' 
                                         && transactions.month = :month && transactions.year = :year && 
                                         books.book_title = '".$book_titles[$counter]['book_title']."' &&
-                                        transactions.purpose_id = books.book_id GROUP BY month, title
-                                    "; 
+                                        transactions.purpose_id = books.book_id GROUP BY month, title                                    "; 
             
                 $stmt = $conn->prepare($book_sales_sql);
                 

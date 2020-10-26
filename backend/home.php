@@ -394,6 +394,7 @@
                                         <!-- /sidebar -->
                                     </div>    
                                     <div class="app-main__outer">
+
                                         <div class="app-main__inner">
                                             <!-- Page title wrapper -->
                                             <?php include_once 'pageTitle.php'; ?>
@@ -403,7 +404,7 @@
                                             <div id="maincontent">
                                                 <?php
 
-                                                    $sql_donations = "
+                                                    $sql_donate = "
                                                                         SELECT donation.title AS title, donation.target_amount AS target, 
                                                                         sum(transactions.amount) AS amount FROM donation, 
                                                                         transactions WHERE transactions.purpose = 'donation' 
@@ -411,7 +412,7 @@
                                                                         && transactions.transc_status = 'completed' GROUP BY title 
                                                                     ";
 
-                                                    $stmt = $conn->query($sql_donations);
+                                                    $stmt = $conn->query($sql_donate);
                                                     $donationsProgress = $stmt->fetchAll();
                                                     
                                                     function percent($amount, $target)
