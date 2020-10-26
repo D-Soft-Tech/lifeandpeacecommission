@@ -33,6 +33,7 @@
                     <title>Admin Dashboard - Mount Zion Fortres</title>
                     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
                     <meta name="msapplication-tap-highlight" content="no">
+                    <link rel="stylesheet" href="../assets/forala/css/froala_editor.pkgd.min.css">
                     <link href="./main.css" rel="stylesheet">
                     <link rel="stylesheet" href="../assets/fontawesomeForWeb/css/all.css.css">
                     </head>

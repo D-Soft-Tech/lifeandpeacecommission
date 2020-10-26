@@ -57,13 +57,25 @@
             <li>
                 <a href="event.php">
                     <i class="metismenu-icon pe-7s-date"></i>
-                    Events
+                    Special Events
+                </a>
+            </li>
+            <li>
+                <a href="weeklyProgram.php">
+                    <i class="metismenu-icon pe-7s-date"></i>
+                    Weekly Programs
                 </a>
             </li>
             <li>
                 <a href="team.php">
                     <i class="metismenu-icon pe-7s-users"></i>
                     Team
+                </a>
+            </li>
+            <li>
+                <a href="users.php">
+                    <i class="metismenu-icon pe-7s-users"></i>
+                    Users
                 </a>
             </li>
             <li class="app-sidebar__heading">Resources</li>
@@ -122,6 +134,13 @@
                     <i class="metismenu-icon pe-7s-credit">
                     </i>
                     Account
+                </a>
+            </li>
+            <li>
+                <a href="transactions.php">
+                    <i class="metismenu-icon pe-7s-graph1">
+                    </i>
+                    Transactions
                 </a>
             </li>
         </ul>

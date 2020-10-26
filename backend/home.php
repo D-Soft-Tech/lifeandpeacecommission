@@ -34,6 +34,33 @@
                     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
                     <meta name="msapplication-tap-highlight" content="no">
                     <link href="./main.css" rel="stylesheet">
+                    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+                    <script type="text/javascript">
+                        google.charts.load('current', {'packages':['bar']});
+                        google.charts.setOnLoadCallback(drawChart);
+
+                        function drawChart() {
+                            var data = google.visualization.arrayToDataTable([
+                            
+                                <?php
+
+                                    include_once 'booksSalesReport.php';
+
+                                ?>
+                            ]);
+
+                            var options = {
+                            chart: {
+                                title: 'Books Sales Report',
+                            },
+                            bars: 'vertical' // Required for Material Bar Charts.
+                            };
+
+                            var chart = new google.charts.Bar(document.getElementById('booksSalesReport'));
+
+                            chart.draw(data, google.charts.Bar.convertOptions(options));
+                        }
+                    </script>
                     </head>
                 <body>
                     <div class="app-container app-theme-white body-tabs-shadow fixed-sidebar fixed-header">
@@ -374,6 +401,67 @@
 
                                             <!-- The Major content that is associated with index page starts from this place -->
                                             <div id="maincontent">
+                                                <?php
+
+                                                    $sql_donations = "
+                                                                        SELECT donation.title AS title, donation.target_amount AS target, 
+                                                                        sum(transactions.amount) AS amount FROM donation, 
+                                                                        transactions WHERE transactions.purpose = 'donation' 
+                                                                        && transactions.purpose_id = donation.id 
+                                                                        && transactions.transc_status = 'completed' GROUP BY title 
+                                                                    ";
+
+                                                    $stmt = $conn->query($sql_donations);
+                                                    $donationsProgress = $stmt->fetchAll();
+                                                    
+                                                    function percent($amount, $target)
+                                                    {
+                                                        $progress = ceil(abs($amount/$target) * 100);
+                                                        echo $progress;
+                                                    }
+
+                                                    function progressBar($amount, $target)
+                                                    {
+                                                        $progress = ceil(abs($amount/$target) * 100);
+
+                                                        if(in_array($progress, range(0, 19)))
+                                                        {
+                                                            echo  '<div class="progress-bar bg-danger" '.
+                                                                    'role="progressbar" aria-valuenow="'.$progress.'" '.
+                                                                    'aria-valuemin="0" aria-valuemax="100" '.
+                                                                    'style="width: '.$progress.'%;"></div>';
+                                                        }
+                                                        if(in_array($progress, range(20, 39)))
+                                                        {
+                                                            echo  '<div class="progress-bar bg-warning" '.
+                                                                    'role="progressbar" aria-valuenow="'.$progress.'" '.
+                                                                    'aria-valuemin="0" aria-valuemax="100" '.
+                                                                    'style="width: '.$progress.'%;"></div>';
+                                                        }
+                                                        if(in_array($progress, range(40, 59)))
+                                                        {
+                                                            echo  '<div class="progress-bar bg-info" '.
+                                                                    'role="progressbar" aria-valuenow="'.$progress.'" '.
+                                                                    'aria-valuemin="0" aria-valuemax="100" '.
+                                                                    'style="width: '.$progress.'%;"></div>';
+                                                        }
+                                                        if(in_array($progress, range(60, 79)))
+                                                        {
+                                                            echo  '<div class="progress-bar bg-primary" '.
+                                                                    'role="progressbar" aria-valuenow="'.$progress.'" '.
+                                                                    'aria-valuemin="0" aria-valuemax="100" '.
+                                                                    'style="width: '.$progress.'%;"></div>';
+                                                        }
+                                                        if(in_array($progress, range(80, 100)))
+                                                        {
+                                                            echo  '<div class="progress-bar bg-success" '.
+                                                                    'role="progressbar" aria-valuenow="'.$progress.'" '.
+                                                                    'aria-valuemin="0" aria-valuemax="100" '.
+                                                                    'style="width: '.$progress.'%;"></div>';
+                                                        }
+                                                    }
+
+                                                ?>
                                                 <?php include_once 'indexcontent.php'; ?>
                                             </div>
                                             <!-- End of the the main content that is associated with the index page -->

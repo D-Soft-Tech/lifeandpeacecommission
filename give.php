@@ -6,6 +6,17 @@
 
   $conn = get_DB();
 
+  function disable_button()
+  {
+    if(isset($_SESSION['username_frontEnd']) && isset($_SESSION['password_frontEnd']) && !empty($_SESSION['username_frontEnd']) && !empty($_SESSION['password_frontEnd']))
+    {
+        echo "value='submit' name='submitAddComment' type='submit'";
+    }
+    else{
+        echo "data-toggle='tooltip' value='Submit' data-placement='right' type='button' title='You have to login first'";
+    }
+  }
+
   ?>
   <style>
     .newJumbotron {
@@ -46,7 +57,7 @@
             </div>
           </div>
           <div class="form-group">
-            <input type="password" class="form-control" id="details" name="details" placeholder="Short details" required>
+            <input type="text" class="form-control" id="details" name="details" placeholder="Short details" required>
           </div>
           <div class="form-group">
               <div class="input-group">
@@ -55,11 +66,11 @@
                           Amount
                       </label>
                   </span>
-                  <input type="Number" id="amount" class="form-control" name="amount" required>
+                  <input type="number" id="amount" class="form-control" name="amount" required>
               </div>
           </div>
           <div class="form-group">
-              <input type="submit" class="btn btn-primary btn-block" name="submit" value="Make Payment">
+            <input class="btn btn-primary btn-lg" <?php disable_button(); ?>>
           </div>
         </form>
       </div>
@@ -83,7 +94,7 @@
                 </p>
                 <div class="row">
                   <div class="col-md-4 card text-white card-content" style="background-color: rgb(51, 51, 51); 
-                  border-color: rgb(51, 51, 51); color: white; margin: 1%;">
+                  border-color: rgb(51, 51, 51); color: white; margin: 1%; padding: 2px 10px;">
                     <h5 class="text-white card-header card-title" style="color: white;">0122450102</h5>
                     <p class="card-body">
                       OLOYEDE ADEBAYO OLAWALE<br />
@@ -91,7 +102,7 @@
                     </p>
                   </div>
 
-                  <div class="col-md-4 card text-white card-content" style="background-color: #3ACA7D; color: white; margin: 1%;">
+                  <div class="col-md-4 card text-white card-content" style="background-color: #3ACA7D; color: white; margin: 1%; padding: 2px 10px;">
                     <h5 class="text-white card-header card-title" style="color: white;">0122450102</h5>
                     <p class="card-body">
                       OLOYEDE ADEBAYO OLAWALE<br />
@@ -99,7 +110,8 @@
                     </p>
                   </div>
                 </div>
-                  Make your the purpose (i.e title, offering or personal pledge) your description while making the transaction
+                  Please write the purpose of your giving (i.e title, offering or personal pledge) (plus any other message you want to include) 
+                  in the description while making the transaction
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

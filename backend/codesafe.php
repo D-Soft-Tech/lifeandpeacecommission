@@ -411,3 +411,77 @@ map = new google.maps.Map(document.getElementById('map'), {
   center: {lat: -34.397, lng: 150.644},
   zoom: 8
 });
+
+// strip tags to avoid breaking any html
+$string = strip_tags($string);
+if (strlen($string) > 500) {
+
+    // truncate string
+    $stringCut = substr($string, 0, 500);
+    $endPoint = strrpos($stringCut, ' ');
+
+    //if the string doesn't contain any space then it will cut without word basis.
+    $string = $endPoint? substr($stringCut, 0, $endPoint) : substr($stringCut, 0);
+    $string .= '... <a href="/this/story">Read More</a>';
+}
+echo $string;
+
+live secrete key
+sk_live_c3753e84039d5fdf192e441f2ec8ddec9c484c3c
+
+live public key 
+pk_live_27f73c513a75dc7ce769291d0a0e4588b411ab34
+
+test secrete key
+sk_test_a1812da9fb6d89298dd8899fdee290eddb66134b
+
+test public key
+pk_test_e1de14e19e0aee0cd1169fbe1a5d52de0c3d633a
+
+
+
+<form >
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+  <button type="button" onclick="payWithPaystack()"> Pay </button> 
+</form>
+ 
+<script>
+  function payWithPaystack(){
+    var handler = PaystackPop.setup({
+      key: 'pk_test_86d32aa1nV4l1da7120ce530f0b221c3cb97cbcc',
+      email: 'customer@email.com',
+      amount: 10000,
+      currency: "NGN",
+      ref: ''+Math.floor((Math.random() * 1000000000) + 1), // generates a pseudo-unique reference. Please replace with a reference you generated. Or remove the line entirely so our API will generate one for you
+      metadata: {
+         custom_fields: [
+            {
+                display_name: "Mobile Number",
+                variable_name: "mobile_number",
+                value: "+2348012345678"
+            }
+         ]
+      },
+      callback: function(response){
+          alert('success. transaction ref is ' + response.reference);
+      },
+      onClose: function(){
+          alert('window closed');
+      }
+    });
+    handler.openIframe();
+  }
+</script>
+
+
+
+<form action="/process" method="POST" >
+  <script
+    src="https://js.paystack.co/v1/inline.js" 
+    data-key="pk_test_221221122121"
+    data-email="customer@email.com"
+    data-amount="10000"
+    data-ref=<UNIQUE TRANSACTION REFERENCE>
+  >
+  </script>
+</form>

@@ -364,6 +364,41 @@
         exit();
     }
 
+    if(isset($_POST['removeWeeklyProgram']) && isset($_POST['name']) && isset($_POST['value']))
+    {
+        $event_id = $_POST['removeWeeklyProgram'];
+        $theme = $_POST['name'];
+        $ext = $_POST['value'];
+
+        $path = "../images/event/weeklyProgram/".$theme.".".$ext;
+
+        if($theme !=="" && $ext !=="" && $event_id !=="")
+        {
+            $deleted = unlink($path);
+
+            if($deleted)
+            {
+                $sql = "
+                            DELETE FROM weekly_meeting WHERE meeting_id = '$event_id'
+                        ";
+
+                $check = $conn->prepare($sql);
+                $read = $check->execute();
+
+                $count = $check->rowCount();
+
+                if($read===true OR $count>0)
+                {
+                    echo    '<div class="col-sm-12 alert alert-success alert-dismissable">'.
+                                '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
+                                '<h6><i class="icon fa pe-7s-check"></i> DONE, The Weekly Program has been removed successfully</h6>'.
+                            '</div>';
+                            exit();
+                }
+            }
+        }
+    }
+
     if(isset($_POST['removeEvent']) && isset($_POST['name']) && isset($_POST['value']))
     {
         $event_id = $_POST['removeEvent'];
@@ -630,7 +665,7 @@
             {
                 echo    '<div class="col-sm-12 alert alert-success alert-dismissable">'.
                             '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
-                            '<h6><i class="icon fa pe-7s-check"></i> DONE, The article has been deleted from the successfully</h6>'.
+                            '<h6><i class="icon fa pe-7s-check"></i> DONE, the account has been deleted successfully</h6>'.
                         '</div>';
                         exit();
             }

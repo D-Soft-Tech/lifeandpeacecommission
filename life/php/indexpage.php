@@ -40,7 +40,7 @@
         public function upcoming()
         {
             $sql = "
-                    SELECT theme, anchor FROM event ORDER BY event_id DESC LIMIT 1
+                    SELECT * FROM event ORDER BY event_id DESC LIMIT 1
                     
                     ";
 
@@ -66,7 +66,7 @@
         public function prog_and_events()
         {
             $sql = "
-                        SELECT event_from, event_time, theme FROM event ORDER BY event_id DESC LIMIT 11
+                        SELECT * FROM event ORDER BY event_id DESC LIMIT 11
                     ";
             
             $event = $this->conn->query($sql);

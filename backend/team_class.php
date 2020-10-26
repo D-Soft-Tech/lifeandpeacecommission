@@ -3,6 +3,7 @@
     class Passport
     {
         public
+        $about,
         $image_name,
         $image_ext,
         $path,
@@ -12,7 +13,7 @@
         $facebook,
         $twitter;
 
-        public function __construct($image_name, $image_ext, $path, $full_name, $title, $role, $facebook, $twitter)
+        public function __construct($about, $image_name, $image_ext, $path, $full_name, $title, $role, $facebook, $twitter)
         {
             $this->image_name = $image_name;
             $this->image_ext = $image_ext;
@@ -22,6 +23,7 @@
             $this->role = $role;
             $this->facebook = $facebook;
             $this->twitter = $twitter;
+            $this->about = $about;
         }
 
         public function Upload()
@@ -54,6 +56,9 @@
                 if($this->role ===""){
                     $error[] = "You did not supply the role of the team member";
                 }
+                if($this->about ===""){
+                    $error[] = "You did not supply any info ABOUT the team member";
+                }
                 if($this->twitter ===""){
                     $this->twitter = " ";
                 }
@@ -74,7 +79,8 @@
                             title,
                             roles,
                             facebook,
-                            tweeter
+                            tweeter,
+                            about
                         )
                         VALUES
                         (
@@ -83,7 +89,8 @@
                             :title,
                             :roles,
                             :facebook,
-                            :tweeter
+                            :tweeter,
+                            :about
                         )";
                     global $conn;
                     $stmt = $conn->prepare($sql);
@@ -93,6 +100,7 @@
                     $stmt->bindValue(':roles', $this->role);
                     $stmt->bindValue(':facebook', $this->facebook);
                     $stmt->bindValue(':tweeter', $this->twitter);
+                    $stmt->bindValue(':about', $this->about);
                     $result = $stmt->execute();
 
                     $count = $stmt->rowCount();

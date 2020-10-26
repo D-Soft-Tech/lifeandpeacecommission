@@ -16,6 +16,22 @@
     }
   }
 
+  function truncate($string)
+  {
+    // strip tags to avoid breaking any html
+    $string = strip_tags($string);
+    if (strlen($string) > 100) {
+
+        // truncate string
+        $stringCut = substr($string, 0, 500);
+        $endPoint = strrpos($stringCut, ' ');
+
+        //if the string doesn't contain any space then it will cut without word basis.
+        $string = $endPoint? substr($stringCut, 0, $endPoint) : substr($stringCut, 0);
+    }
+    return $string;
+  }
+
   function get_year()
   {
     if (isset($_POST['year']) && $_POST['year'] !== "") {
@@ -166,7 +182,7 @@
           <div class="col-md-8 col-sm-8 bulletin">
             <h4 class="media-heading"><?= $articles['article_title']; ?> </h4>
             <p>Posted on <?= $articles['date_added']; ?> by <a class="link-reverse"><?= $articles['article_author']; ?></a></p>
-            <p>  <?= $articles['article_details']; ?>...</p>
+            <p>  <?= truncate($articles['article_details']); ?>...</p>
             <a class="btn btn-primary" href="blog-single.php?articleID=<?= $articles['articles_id']; ?>" role="button">Read Article →</a> </div>
         </div>
       <?php endforeach; ?>
@@ -188,11 +204,11 @@
         <h4>Blog archives</h4>
         <?php
           
-          $sql_donations = "
+          $sql_articles = "
                               SELECT * FROM articles ORDER BY articles_id DESC LIMIT 10
                             ";
 
-          $stmtAll = $conn->prepare($sql_donations);
+          $stmtAll = $conn->prepare($sql_articles);
           $stmtAll->execute();
 
         ?>
@@ -201,7 +217,7 @@
             while($lsArticles = $stmtAll->fetch())
             {
             ?>
-              <li><a href="blog-single.php?searchArticleById=<?= $lsArticles['id']; ?>"><?= $lsArticles['article_title']; ?></a></li>
+              <li><a href="blog-single.php?articleID=<?= $lsArticles['articles_id']; ?>"><?= $lsArticles['article_title']; ?></a></li>
           <?php
             }
           ?>

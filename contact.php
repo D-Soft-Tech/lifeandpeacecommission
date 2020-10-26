@@ -1,5 +1,82 @@
 <?php
+
+include_once 'life/php/db.php';
 include_once 'header/header.php';
+
+$conn = get_DB();
+
+$alertMessage = "";
+
+function disable_button()
+  {
+    if(isset($_SESSION['username_frontEnd']) && isset($_SESSION['password_frontEnd']) && !empty($_SESSION['username_frontEnd']) && !empty($_SESSION['password_frontEnd']))
+    {
+        echo "value='Send Message' name='submitContactUsMessage' type='submit'";
+    }
+    else{
+        echo "data-toggle='tooltip' name='submitContactUsMessage' value='Send Message' data-placement='right' type='button' title='You have to login first'";
+    }
+  }
+
+  if(isset($_POST['submitContactUsMessage']) && $_POST['submitContactUsMessage'] === "Send Message")
+  {
+    $sender = $_SESSION['username_frontEnd'];
+
+    $userID_resource = $conn->query("SELECT user_id FROM users WHERE username = '$sender'");
+    $userID = $userID_resource->fetch();
+    
+    $sanitizer = filter_var_array($_POST, FILTER_SANITIZE_STRING);
+
+    $message = $sanitizer['message'];
+    $subject = $sanitizer['subject'];
+
+    $date = date("l, F jS, Y");
+
+    if(!empty($sender) && !empty($message))
+    {
+      $sqlmessage = "
+                        INSERT INTO contacts set contact_subject = :contact_subject, details = :details, date_added = :date_added, user_id = :user_id 
+                      ";
+
+      $stmt1 = $conn->prepare($sqlmessage);
+      $stmt1->bindValue(':contact_subject', $subject);
+      $stmt1->bindValue(':details', $message);
+      $stmt1->bindValue(':date_added', $date);
+      $stmt1->bindValue(':user_id', $userID['user_id']);
+
+      $check = $stmt1->execute();
+
+      $count = $stmt1->rowCount();
+
+      if($check === true && $count>0)
+      {
+        $alertMessage = '<div class="alert alert-success alert-dismissable mt-2" style="margin-right: 10%; margin-top: 10px; margin-bottom: 0px; margin-left: 10%;">'.
+                            '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
+                            '<div class="">'.
+                                '<h6><i class="fa fa-check"></i>&nbsp;&nbsp;&nbsp; Thank you, your message has been received!!!</h6>'.
+                            '</div>'.
+                        '</div>';
+      }
+      else
+      {
+        $alertMessage = '<div class="alert alert-danger alert-dismissable mt-2" style="margin-right: 10%; margin-top: 10px; margin-bottom: 0px; margin-left: 10%;">'.
+                            '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
+                            '<div class="">'.
+                                '<h6><i class="fa fa-check"></i>&nbsp;&nbsp;&nbsp; Error sending the message, please try again later!!!</h6>'.
+                            '</div>'.
+                        '</div>';
+      }
+    }
+    else
+      {
+        $alertMessage = '<div class="alert alert-danger alert-dismissable mt-2" style="margin-right: 10%; margin-top: 10px; margin-bottom: 0px; margin-left: 10%;">'.
+                            '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
+                            '<div class="">'.
+                                '<h6><i class="fa fa-check"></i>&nbsp;&nbsp;&nbsp; Error sending the message, please try again later. Thank You</h6>'.
+                            '</div>'.
+                        '</div>';
+      }
+  }
 ?>
 
 <!--SUBPAGE HEAD-->
@@ -15,8 +92,16 @@ include_once 'header/header.php';
 
 <div class="container">
   <div class="row">
+
+    <!-- Alert div for showing if the comment is successfully sent or not -->
+    <div class="col-md-12">
+      <div class="row">
+        <?= $alertMessage; ?>
+      </div>
+    </div>
+
     <div class="col-md-6 has-margin-bottom">
-      <form id="phpcontactform" role="form">
+      <form id="phpcontactform" method="POST" role="form">
         <div class="form-group">
           <label for="subject">Subject</label>
           <input type="text" class="form-control" placeholder="summarize your message in one sentence" name="subject" id="subject" required>
@@ -25,7 +110,7 @@ include_once 'header/header.php';
           <label for="message">Message</label>
           <textarea class="form-control" rows="6" name="message" id="message" placeholder="Your message in full" required></textarea>
         </div>
-        <button type="submit" class="btn btn-primary btn-lg">Send message</button>
+        <input class="btn btn-primary btn-lg" <?php disable_button(); ?>>
         <span class="help-block loading"></span>
       </form>
     </div>

@@ -11,6 +11,7 @@
             $role = $_POST['role'];
             $facebook = $_POST['facebook'];
             $twitter = $_POST['tweeter'];
+            $about = $_POST['about'];
 
             $name = strtolower($_FILES['teamPicture']['name']);
 
@@ -19,7 +20,7 @@
 
             $path = "../images/team/".$full_name.".".$ext;
 
-            $passport_obj = new Passport($name, $ext, $path, $full_name, $title, $role, $facebook, $twitter);
+            $passport_obj = new Passport($about, $name, $ext, $path, $full_name, $title, $role, $facebook, $twitter);
             $passport_obj->Upload();
         }
     }
@@ -127,6 +128,12 @@
                     <div class="form-group col-md-12">
                         <label for="role">Role</label>
                         <input type="text" class="form-control" name="role" id="role" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="about">About <small class="text-danger">(About the person in less than 50 <em><b>words</b></em>)</small></label>
+                        <textarea name="about" class="fr-view" id="about" cols="30" rows="10"></textarea>
                     </div>
                 </div>
                 <div class="form-row">

@@ -8,9 +8,10 @@ if(isset($_POST['saveAccount']))
         $number = $_POST['account_number'];
         $bank = $_POST['bank_name'];
         $purpose = $_POST['purpose'];
+        $apikey = $_POST['apikey'];
 
         $sql = "
-                    INSERT INTO account (account_name, account_number, purpose, bank_name) VALUES (:account_name, :account_number, :purpose, :bank_name)
+                    INSERT INTO account (account_name, account_number, purpose, bank_name, api_key) VALUES (:account_name, :account_number, :purpose, :bank_name, :api_key)
                 ";
 
         $check = $conn->prepare($sql);
@@ -18,6 +19,7 @@ if(isset($_POST['saveAccount']))
         $check->bindValue(':account_number', $number);
         $check->bindValue(':purpose', $purpose);
         $check->bindValue(':bank_name', $bank);
+        $check->bindValue(':api_key', $apikey);
 
         $check = $check->execute();
 
@@ -78,7 +80,7 @@ if(isset($_POST['editAccount']) && isset($_POST['checker']))
         {
             $errorMsg =  '<div class="col-sm-12 alert alert-danger alert-dismissable">'.
                             '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
-                            '<h6><i class="icon fa pe-7s-attention"></i> Unable to perform the tast, please try again later</h6>'.
+                            '<h6><i class="icon fa pe-7s-attention"></i> Unable to perform the task, please try again later</h6>'.
                         '</div>';
 
             echo $errorMsg;
@@ -220,6 +222,14 @@ if(isset($_POST['editAccount']) && isset($_POST['checker']))
                             </h6>
                         </label>
                         <input name="purpose" id="account_purpose" placeholder="What purpose do you want this account number to serve? Books, Tithes, Offering etc." class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="apikey" class="">
+                            <h6>
+                                API KEY
+                            </h6>
+                        </label>
+                        <input name="apikey" id="apikey" placeholder="Ensure this is correct, no extra thing or space" class="form-control" required>
                     </div>
                     <button name="saveAccount" value="saveAccount" id="" class="mt-1 btn btn-primary btn-block addAccount">Add Account</button>
                 </form>

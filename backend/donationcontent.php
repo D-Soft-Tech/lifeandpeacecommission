@@ -83,17 +83,59 @@
 
 <?php foreach($donations as $donations) :  ?>
     <div class="row mb-3" id="<?= $donations['id']; ?>">
+        <?php
+
+            $propose_date = $donations['target_date'];
+                
+            $proposed_date = strtotime($propose_date);
+            $currentDate = date('F jS, Y');
+            $currentTime = strtotime($currentDate);
+
+            if($currentTime < $proposed_date)
+            {
+            $daysLeft = ceil(abs($proposed_date - $currentTime)/86400). "days left";
+            }
+            elseif($proposed_date === $currentTime)
+            {
+            $daysLeft = '0 days left';
+            }
+            else
+            {
+            $daysLeft = "Target date passed";
+            }
+
+
+            // getting the amount already raised for the current donation and percentage complete
+            $donation_id = $donations['id'];
+      
+            $sql_transc =   "
+                                SELECT sum(amount) AS amount FROM transactions WHERE purpose = 'donation' && purpose_id = '$donation_id'
+                            ";
+
+            $pldg_amount = $conn->query($sql_transc);
+
+            $pledged = $pldg_amount->fetchColumn();
+            
+            $prg_percent = ceil(abs($pledged/$donations['target_amount']) * 100);
+
+        ?>
         <div class="col-xs-12 col-md-8">
             <div class="main-card card">
                 <div class="card-body">
                     <h4 class="card-title text-info font-weight-bold"><?= $donations['title'];?></h4>
                     <div class="my-3 progress">
                         <div class="progress-bar progress-bar-animated bg-success progress-bar-striped" 
-                            role="progressbar" aria-valuenow="10" aria-valuemin="0" 
-                            aria-valuemax="100" style="width: 10%;">
+                            role="progressbar" style="width: <?= $prg_percent; ?>%;">
                         </div>
                     </div>
-                    <h5 class="text-danger">#350,000.00 of #<?= $donations['target_amount'];?> </h5>
+                    <div class="row">
+                        <div class="col-md-6 col-xs-12">
+                            <h5 class="text-danger"># <?= number_format($pledged); ?> of #<?= $donations['target_amount'];?> </h5>
+                        </div>
+                        <div class="col-md-6 col-xs-12">
+                            <h6><?= $daysLeft;?></h6>
+                        </div>
+                    </div>
                     <div>
                         <button type="button" class="mt-2 ml-2 mr-5 btn btn-sm">
                             <a href="seeDonators.php?id=<?= $donations['id']; ?>" class="btn-transition btn btn-sm btn-outline-success">See Donators</a>

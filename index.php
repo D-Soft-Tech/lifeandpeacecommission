@@ -52,7 +52,7 @@
     <div class="ec-txt"> <span>UPCOMING EVENT</span>
       <p><?php $call = new most_recent_event(); $call->upcoming(); ?></p>
     </div>
-    <a class="btn btn-lg btn-primary" href="event-single.php" role="button">Program details →</a> </div>
+    <a class="btn btn-lg btn-primary" href="events-programs.php" role="button">Program details →</a> </div>
 </div>
 
 <!-- // UPCOMING EVENT --> 
@@ -118,7 +118,7 @@
                 <h4>  <?php echo $events['event_from']; ?> </h4>
                 <p class="el-head"><?php echo $events['theme']; ?></p>
                 <span><?php echo $events['event_time']; ?></span>
-                <p class="el-cta"><a class="btn btn-primary" href="event-single.php" role="button">Details &rarr;</a></p>
+                <p class="el-cta"><a class="btn btn-primary" href="event-single.php?theme=<?= $events['theme']; ?>&details=<?= $events['details']; ?>&from=<?= $events['event_from']; ?>&ext=<?= $events['ext']; ?>" role="button">Details &rarr;</a></p>
               </div>
             <?php
             }

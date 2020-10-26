@@ -60,12 +60,12 @@
 <div class="modal fade bd-example-modal-lg mt-5" id="logoutModal" role="dialog" data-backdrop="false">
     <div class="modal-dialog">
         <div class="modal-content">
-        <div class="modal-header text-danger">
-            <h5 class="modal-title">
+        <div class="modal-header">
+            <h5 class="modal-title text-danger">
                 Warning <i class="icon fa pe-7s-attention"></i> 
             </h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
+                <span aria-hidden="true" class="text-danger">&times;</span>
             </button>
         </div>
         <div class="modal-body">
@@ -76,12 +76,15 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button class="mr-5 btn-transition btn btn-outline-success" data-dismiss="modal">
-                Cancel
-            </button>
-            <button type="submit" id="" name="logout" value="logout"class="mr-5 btn-transition btn btn-outline-danger finalAccountDelete" data-dismiss="modal">
-                Yes, Proceed
-            </button>
+            <form method="POST">
+              <button class="mr-5 btn btn-success" data-dismiss="modal" style="margin-right: 20px;" >
+                  Cancel
+              </button>
+              <input type="text" id="logoutUsername" name="logoutUsername" value="" hidden required>
+              <button type="submit" id="logoutPassword" name="logoutPassword" value="" class="mr-5 btn btn-danger">
+                  Yes, Proceed
+              </button>
+            </form>
         </div>
     </div>
 </div>
@@ -96,12 +99,29 @@
 <script src="js/jquery.js"></script> 
 <script src="js/bootstrap.min.js"></script>
 <script src="assets/fontawesomeForWeb/js/all.js"></script>
+<script src="assets/jssocial/jssocials.js"></script>
 <script src="js/owl.carousel.min.js"></script> 
 <script src="js/ketchup.all.js"></script> 
 <script src="js/fancybox.js"></script>
 <script src="../assets/forala/js/froala_editor.pkgd.min.js"></script>
+<script type="text/javascript" src="ajax_class.js"></script>
 
 <!--============== SUBSCRIBE FORM =================--> 
+
+<script type="text/javascript">
+  
+    $(function(){
+      var link = 'laravel.com';
+      $("#shareNow").jsSocials({
+        url: link,
+        text: 'just testing',
+        showLabel: true,
+        showCount: "inside",
+        shareIn: "popup",
+        shares: ["whatsapp", "facebook", "instagram", "twitter", "email"]
+      });
+    });
+</script>
 
 <script>
 
@@ -148,8 +168,39 @@
     });
 
   });
+
+  $(document).ready(function (){
+
+    // $('.flash_msg').delay(250).fadeOut('slow');
+
+    $('.logOut').click(function (){
+        var userU = $(this).attr("id");
+        var userP = $(this).attr("name");
+
+        $('#logoutUsername').attr("value", userU);
+        $('#logoutPassword').attr("value", userP);
+
+        $('#logoutModal').modal('show');
+
+        // $('#logoutPassword').click(function (){
+        //   var u =  $('#logoutUsername').attr("value");
+        //   var p = $(this).attr("value");
+        //   alert(p);
+        // });
+    });
+  });
 </script>
 
 <script>
   $('[data-toggle="tooltip"]').tooltip({boundary: 'window'});
 </script>
+<?php
+  if(isset($_GET['logoutPassword']))
+  {
+    // unset($_SESSION);
+
+    echo "good";
+  }else{echo "hmmm";}
+
+  // && isset($_POST['logoutPassword']) && in_array($_POST['logoutUsername'], $_SESSION) === true && in_array($_POST['logoutPassword'], $_SESSION) === true
+?>

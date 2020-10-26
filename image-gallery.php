@@ -24,9 +24,20 @@
     else{ return date("Y");}
   }
 
+  function get_day()
+  {
+    if (isset($_POST['day']) && $_POST['day'] !== "") {
+        return $_POST['day'];
+    }elseif (isset($_GET['day']) && $_GET['day'] !== "") {
+        return $_GET['day'];
+    }
+    else{ return date("j");}
+  }
+
 
   $month = get_month();
   $year = get_year();
+  $day = get_day();
 
   $limit = 5;
   $page = 1;
@@ -92,10 +103,9 @@
   $Next = nextArrow();
 
   $start = ($page - 1) * $limit;
-  $result = $conn->query("SELECT testimonies.*, users.full_name AS full_name FROM testimonies, users WHERE testimonies.status = 'read' && testimonies.user_id = users.user_id && date_added LIKE '%$month%$year' ORDER BY testimonies.id DESC LIMIT $start, $limit");
-  $testimonies = $result->fetchAll();
+  $result = $conn->query("SELECT * FROM gallery WHERE day LIKE '%$day%' && month = '$month' && year = '$year' ORDER BY id DESC LIMIT $start, $limit");
 
-  $result1 = $conn->query("SELECT count(testimonies.id) AS id FROM testimonies, users WHERE testimonies.status = 'read' && testimonies.user_id = users.user_id && date_added LIKE '%$month%$year'");
+  $result1 = $conn->query("SELECT count(id) AS id FROM gallery WHERE day LIKE '%$day' && month = '$month' && year = '$year'");
   $custCount = $result1->fetchAll();
   $total = $custCount[0]['id'];
 
@@ -103,26 +113,114 @@
 
 <!--SUBPAGE HEAD-->
 
-<div class="subpage-head has-margin-bottom">
+<div class="subpage-head" style="margin-bottom: 1%;">
   <div class="container">
     <h3>Photo Gallery</h3>
     <p class="lead">Curated mages of our church programs and events</p>
   </div>
 </div>
 
+<div class="container">
+  <div class="row">
+    <div class="text-center">
+        <nav aria-label="Page navigation">
+          <ul class="pagination">
+            <li>
+                <a href="image-gallery.php?pages=<?= $Previous; ?>&page=<?= $page; ?>&month=<?= $month; ?>&year=<?= $year; ?>&day=<?= $day; ?>" 
+                    class="btn btn-transition btn btn-sm btn-outline-primary" aria-label="Previous">
+                    <span aria-hidden="true">&laquo; </span>
+                </a>
+            </li>
+            <?php 
+                $i = $pages > 5 ? $pages - 4 : 1;
+                for($i; $i<= $pages; $i++)
+                {
+                ?>
+                <li><a href="image-gallery.php?page=<?= $i; ?>&pages=<?= $pages; ?>&month=<?= $month; ?>&year=<?= $year; ?>&day=<?= $day; ?>" class="btn btn-transition btn btn-sm btn-outline-primary"><?= $i; ?></a></li>
+                <?php 
+                }
+            ?>
+            <li>
+                <a href="image-gallery.php?pages=<?= $Next; ?>&page=<?= $page; ?>&month=<?= $month; ?>&year=<?= $year; ?>&day=<?= $day; ?>"
+                class="btn btn-transition btn btn-sm btn-outline-primary" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+          </ul>
+        </nav>
+    </div>
+  </div>
+  <div class="vertical-links" style="margin-right:5%; margin-left: 5%">
+        <form method="POST">
+          <div class="form-row">
+            <div class="col-xs-1"></div>
+            <div class="col-xs-3" style="padding-right: 2px;">
+              <select id="day" name="day" class="form-control-sm form-control">
+                <option>Day</option>
+                  <?php
+                      for ($i=1; $i <=31; ++$i) { 
+                          echo '<option value="'.$i.'">' . $i . '</option>';
+                      }
+                  ?>
+              </select>
+            </div>
+            <div class="col-xs-3" style="padding-right: 2px; padding-left: 2px;">
+              <select id="month" name="month" class="form-control-sm form-control">
+                <option>Month </option>
+                <option value="January">January</option>
+                <option value="February">February</option>
+                <option value="March">March</option>
+                <option value="April">April</option>
+                <option value="May">May</option>
+                <option value="June">June</option>
+                <option value="July">July</option>
+                <option value="August">August</option>
+                <option value="September">September</option>
+                <option value="October">October</option>
+                <option value="November">November</option>
+                <option value="December">December</option>
+              </select>
+            </div>
+            <div class="col-xs-3" style="padding-left: 2px;">
+              <div class="row">
+                <div class="col-xs-9" style="padding-right: 2px;">
+                    <select id="year" name="year" class="form-control-sm form-control">
+                        <option>Year</option>
+                        <?php
+                            for ($now= "2020"; $now <= date("Y"); $now++) { 
+                                echo '<option value="'.$now.'">' . $now . '</option>';
+                            }
+                        ?>
+                    </select>
+                </div>
+                <div class="col-xs-3" style="padding-left: 2px;">
+                    <button name="filtered_search" value="filtered_search" class="btn btn-transition btn btn-sm btn-outline-success"><i class="fa fa-search"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="col-xs-2"></div>
+          </div>
+        </form>
+        <br /><br />
+      </div>
+</div>
 <!-- // END SUBPAGE HEAD --> 
 
 <!--OUR GALLERY-->
 <div class="container has-margin-bottom">
   <div class="img-gallery row">
-    <div class="col-sm-4 col-md-3"> <a class="fancybox" href="images/gallery/asdffg.jpg" data-fancybox-group="gallery" title="church image gallery"> <img src="images/gallery/thumb/gallery_thumb_1.jpg" class="img-responsive" width="270" height="270" alt="church image gallery"> </a> </div>
-    <div class="col-sm-4 col-md-3"> <a class="fancybox" href="images/gallery/qwqerert.jpg" data-fancybox-group="gallery" title="church image gallery"> <img src="images/gallery/thumb/gallery_thumb_2.jpg" class="img-responsive" width="270" height="270" alt="church image gallery"> </a> </div>
-    <div class="col-sm-4 col-md-3"> <a class="fancybox" href="images/gallery/Early Morning Worship.jpg" data-fancybox-group="gallery" title="church image gallery"> <img src="images/gallery/thumb/gallery_thumb_3.jpg" class="img-responsive" width="270" height="270" alt="church image gallery"> </a> </div>
-    <div class="col-sm-4 col-md-3"> <a class="fancybox" href="images/gallery/img_gallery_4.jpg" data-fancybox-group="gallery" title="church image gallery"> <img src="images/gallery/thumb/gallery_thumb_4.jpg" class="img-responsive" width="270" height="270" alt="church image gallery"> </a> </div>
-    <div class="col-sm-4 col-md-3"> <a class="fancybox" href="images/gallery/img_gallery_5.jpg" data-fancybox-group="gallery" title="church image gallery"> <img src="images/gallery/thumb/gallery_thumb_5.jpg" class="img-responsive" width="270" height="270" alt="church image gallery"> </a> </div>
-    <div class="col-sm-4 col-md-3"> <a class="fancybox" href="images/gallery/img_gallery_6.jpg" data-fancybox-group="gallery" title="church image gallery"> <img src="images/gallery/thumb/gallery_thumb_6.jpg" class="img-responsive" width="270" height="270" alt="church image gallery"> </a> </div>
-    <div class="col-sm-4 col-md-3"> <a class="fancybox" href="images/gallery/img_gallery_7.jpg" data-fancybox-group="gallery" title="church image gallery"> <img src="images/gallery/thumb/gallery_thumb_7.jpg" class="img-responsive" width="270" height="270" alt="church image gallery"> </a> </div>
-    <div class="col-sm-4 col-md-3"> <a class="fancybox" href="images/gallery/img_gallery_8.jpg" data-fancybox-group="gallery" title="church image gallery"> <img src="images/gallery/thumb/gallery_thumb_8.jpg" class="img-responsive" width="270" height="270" alt="church image gallery"> </a> </div>
+    <?php 
+      while($gallery = $result->fetch())
+      {
+      ?>
+      <div class="col-sm-4 col-md-3"> 
+        <a class="fancybox" href="images/gallery/<?= $gallery['title']; ?>.<?= $gallery['ext']; ?>" data-fancybox-group="gallery" title="<?= $gallery['title']; ?>">
+          <img src="images/gallery/<?= $gallery['title']; ?>.<?= $gallery['ext']; ?>" class="img-responsive" width="270" height="270" alt="<?= $gallery['title']; ?>">
+        </a>
+      </div>
+      <?php
+      }
+      ?>
   </div>
 </div>
 <!--// END OUR GALLERY --> 

@@ -19,7 +19,7 @@
         $details = $_POST['details'];
         $link = $_POST['link'];
 
-        $day = date("l"); $month = date("F"); $year = date("Y");
+        $date = date('jS'); $dayOfWeek = date("l"); $day=$dayOfWeek . " $date of "; $month = date("F"); $year = date("Y");
 
         $passport_obj = new Passport($title, $anchor, $details, $link, $day, $month, $year);
         $passport_obj->Upload();
@@ -141,7 +141,7 @@
                 <div class="col-xs-12 mx-auto px-2" style="height: 350px; width: 100%;">
                     <div class="text-center" id="book-top"> 
                         <iframe class="media-object embed-responsive embed-responsive-16by9" style="height: 350px; width: 100%;"
-                            src="<?= $videos['link']; ?>" frameborder="0" allowfullscreen>
+                            src="https://youtube.com/embed/-c8LoR84Xjs" frameborder="0" allowfullscreen>
                         </iframe>
                         <div class="overlay">
                             <button id="<?= $videos['id']; ?>" class="btn btn-dark removeVideo" title="Delete"><i class="fa fa-lg fa-trash removeVideo"></i></button>

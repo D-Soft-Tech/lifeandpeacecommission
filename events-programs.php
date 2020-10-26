@@ -6,6 +6,22 @@
 
   $conn = get_DB();
 
+  function truncate($string)
+  {
+    // strip tags to avoid breaking any html
+    $string = strip_tags($string);
+    if (strlen($string) > 100) {
+
+        // truncate string
+        $stringCut = substr($string, 0, 500);
+        $endPoint = strrpos($stringCut, ' ');
+
+        //if the string doesn't contain any space then it will cut without word basis.
+        $string = $endPoint? substr($stringCut, 0, $endPoint) : substr($stringCut, 0);
+    }
+    return $string;
+  }
+
   function get_month()
   {
     if (isset($_POST['month']) && $_POST['month'] !== "") {
@@ -165,7 +181,7 @@
               </div>
               <div class="col-md-8 bulletin">
                 <h4 class="media-heading"><?= $events['theme']; ?></h4>
-                <p class="media-content"><?= $events['details']; ?></p>
+                <p class="media-content"><?= truncate($events['details']); ?></p>
                 <a class="btn btn-primary" 
                 href="event-single.php?theme=<?= $events['theme']; ?>&time=<?php if($events['event_time']){echo $events['event_time']; }else{echo "";}?>&details=<?= $events['details']; ?>&from=<?= $events['event_from']; ?>&to=<?php if(isset($events['event_to'])){echo $events['event_to']; }else{echo "";}?>&ext=<?= $events['ext']; ?>" role="button">Event Details →</a>
               </div>

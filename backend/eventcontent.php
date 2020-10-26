@@ -2,6 +2,35 @@
 
     require_once ('event_class.php');
 
+    if (isset($_POST['submitAddWeeklyEvent'])) 
+    {
+        if (isset($_FILES) && isset($_POST))
+        {  
+            $theme = $_POST['theme'];
+            $anchor = $_POST['anchor'];
+            $phone = $_POST['phone'];
+            $details = $_POST['details'];
+
+            $day = $_POST['dayOfTheWeek'];
+
+            $hour = $_POST['hour'];
+            $minutes = $_POST['minutes'];
+            $amOrPm = $_POST['amOrPm'];
+
+            $time = $hour. " : ". $minutes . " ". $amOrPm;
+
+            $name = strtolower($_FILES['eventPicture']['name']);
+
+            $splitted = explode(".", $name);
+            $ext = end($splitted);
+
+            $path = "../images/event/".$theme.".".$ext;
+
+            $weeklyProgram = new weeklyProgram($name, $ext, $path, $theme, $anchor, $phone, $details, $day, $time);
+            $weeklyProgram->Upload();
+        }
+    }
+
     if (isset($_POST['submitAddEvent'])) 
     {
         if (isset($_FILES) && isset($_POST))
@@ -24,7 +53,7 @@
             $splitted = explode(".", $name);
             $ext = end($splitted);
 
-            $path = "../images/event/".$theme.".".$ext;
+            $path = "../images/event/weeklyProgram".$theme.".".$ext;
 
             $passport_obj = new Passport($name, $ext, $path, $theme, $anchor, $details, $event_from, $event_to, $event_time);
             $passport_obj->Upload();
@@ -166,3 +195,4 @@
         </div>
     </div>
 </div>
+

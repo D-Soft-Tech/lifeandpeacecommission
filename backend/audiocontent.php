@@ -32,7 +32,8 @@
            $anchor = $_POST['anchor'];
            $details = $_POST['details'];
 
-           $day = date("l"); 
+           $dayNumber = date("jS"); 
+           $day = $dayNumber . " of ";
            $month = date("F"); 
            $year = date("Y");
 

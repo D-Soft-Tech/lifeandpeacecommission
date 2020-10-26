@@ -51,12 +51,40 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-xs-12 col-md-7">
+    <div class="col-xs-12 col-md-12">
         <div class="mb-3 card">
-            <div class="card-header-tab card-header-tab-animation card-header">
-                <div class="card-header-title">
-                    <i class="header-icon lnr-apartment icon-gradient bg-love-kiss"> </i>
-                    Books Sales Report
+            <div class="card-header">
+                <div class="card-title">
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-6 mr-0 pr-0">
+                                <select id="month" name="month" class="form-control-sm form-control">
+                                    <option value="1">1<sup>st</sup> Half</option>
+                                    <option value="2">2<sup>nd</sup> Half</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <div class="row">
+                                    <div class="col-9 pl-0 ml-0 pr-2">
+                                        <select id="year" name="year" class="form-control-sm form-control">
+                                            <?php
+                                                for ($now= "2020"; $now <= date("Y"); $now++) { 
+                                                    echo '<option value="'.$now.'">' . $now . '</option>';
+                                                }
+                                            ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-3 pl-0">
+                                        <button type="submit" 
+                                            name="submitSearchBooksSalesReport" value="submitSearchBooksSalesReport" 
+                                            class="btn btn-transition btn btn-sm btn-outline-success">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
             <div class="card-body">
@@ -64,27 +92,10 @@
                     <div class="tab-pane fade show active" id="tabs-eg-77">
                         <div class="card mb-3 widget-chart widget-chart2 text-left w-100">
                             <div class="widget-chat-wrapper-outer">
-                                <div class="widget-chart-wrapper widget-chart-wrapper-lg opacity-10 m-0">
-                                    <canvas id="canvas"></canvas>
-                                </div>
+                                <div id="booksSalesReport" class="p-3" style="width: 100%; height:50vh;"></div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-xs-12 my-xs-0 mb-4 my-md-5 col-md-5">
-        <div class="card">
-            <div class="card-header-tab card-header-tab-animation card-header">
-                <div class="card-header-title">
-                    <i class="header-icon lnr-apartment icon-gradient bg-love-kiss"> </i>
-                    KEY:-
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="tab-content">
-                
                 </div>
             </div>
         </div>
@@ -299,88 +310,29 @@
     <h5>Donations Target Informations</h5>
 </div>
 <div class="row">
-    <div class="col-md-6 col-lg-3">
-        <div class="card-shadow-danger mb-3 widget-chart widget-chart2 text-left card">
-            <div class="widget-content">
-                <div class="widget-content-outer">
-                    <div class="widget-content-wrapper">
-                        <div class="widget-content-left pr-2 fsize-1">
-                            <div class="widget-numbers mt-0 fsize-3">71%</div>
-                        </div>
-                        <div class="widget-content-right w-100">
-                            <div class="progress-bar-xs progress">
-                                <div class="progress-bar bg-primary" role="progressbar" aria-valuenow="71" aria-valuemin="0" aria-valuemax="100" style="width: 71%;"></div>
+    <?php foreach($donationsProgress as $donationsProgress) : ?>
+        <div class="col-md-6 col-lg-3">
+            <div class="card-shadow-danger mb-3 widget-chart widget-chart2 text-left card">
+                <div class="widget-content">
+                    <div class="widget-content-outer">
+                        <div class="widget-content-wrapper">
+                            <div class="widget-content-left pr-2 fsize-1">
+                                <div class="widget-numbers mt-0 fsize-3"><?php percent($donationsProgress['amount'], $donationsProgress['target']); ?>%</div>
+                            </div>
+                            <div class="widget-content-right w-100">
+                                <div class="progress-bar-xs progress">
+                                    <?php
+                                        progressBar($donationsProgress['amount'], $donationsProgress['target']);
+                                    ?>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="widget-content-left fsize-1">
-                        <div class="text-muted opacity-6">Motherless babies homes outreach</div>
+                        <div class="widget-content-left fsize-1">
+                            <div class="text-muted opacity-6"><?= $donationsProgress['title']; ?></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="col-md-6 col-lg-3">
-        <div class="card-shadow-success mb-3 widget-chart widget-chart2 text-left card">
-            <div class="widget-content">
-                <div class="widget-content-outer">
-                    <div class="widget-content-wrapper">
-                        <div class="widget-content-left pr-2 fsize-1">
-                            <div class="widget-numbers mt-0 fsize-3">54%</div>
-                        </div>
-                        <div class="widget-content-right w-100">
-                            <div class="progress-bar-xs progress">
-                                <div class="progress-bar bg-info" role="progressbar" aria-valuenow="54" aria-valuemin="0" aria-valuemax="100" style="width: 54%;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="widget-content-left fsize-1">
-                        <div class="text-muted opacity-6">Masopa Church Planting Project</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 col-lg-3">
-        <div class="card-shadow-warning mb-3 widget-chart widget-chart2 text-left card">
-            <div class="widget-content">
-                <div class="widget-content-outer">
-                    <div class="widget-content-wrapper">
-                        <div class="widget-content-left pr-2 fsize-1">
-                            <div class="widget-numbers mt-0 fsize-3">32%</div>
-                        </div>
-                        <div class="widget-content-right w-100">
-                            <div class="progress-bar-xs progress">
-                                <div class="progress-bar bg-danger" role="progressbar" aria-valuenow="32" aria-valuemin="0" aria-valuemax="100" style="width: 32%;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="widget-content-left fsize-1">
-                        <div class="text-muted opacity-6">Masopa village Outreach</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 col-lg-3">
-        <div class="card-shadow-info mb-3 widget-chart widget-chart2 text-left card">
-            <div class="widget-content">
-                <div class="widget-content-outer">
-                    <div class="widget-content-wrapper">
-                        <div class="widget-content-left pr-2 fsize-1">
-                            <div class="widget-numbers mt-0 fsize-3">89%</div>
-                        </div>
-                        <div class="widget-content-right w-100">
-                            <div class="progress-bar-xs progress">
-                                <div class="progress-bar bg-success" role="progressbar" aria-valuenow="89" aria-valuemin="0" aria-valuemax="100" style="width: 89%;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="widget-content-left fsize-1">
-                        <div class="text-muted opacity-6">Fasade Village Outreach</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <?php endforeach; ?>
 </div>

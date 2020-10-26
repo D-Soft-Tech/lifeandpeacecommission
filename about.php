@@ -1,5 +1,25 @@
 <?php
+  include_once 'life/php/db.php';
   include_once 'header/header.php';
+
+  $conn = get_DB();
+
+  function truncate($string)
+  {
+    // strip tags to avoid breaking any html
+    $string = strip_tags($string);
+    if (strlen($string) > 50) {
+
+        // truncate string
+        $stringCut = substr($string, 0, 500);
+        $endPoint = strrpos($stringCut, ' ');
+
+        //if the string doesn't contain any space then it will cut without word basis.
+        $string = $endPoint? substr($stringCut, 0, $endPoint) : substr($stringCut, 0);
+    }
+    return $string;
+  }
+
 ?>
 
 <!--SUBPAGE HEAD-->
@@ -31,22 +51,31 @@
     <div class="col-md-3 visible-md-block visible-lg-block">
       <div class="well">
         <div class="section-title">
-          <h4> RECENT SERMONS </h4>
+          <h4> RECENT ARTICLES </h4>
         </div>
         <a href="#"><img src="images/video-thumb.jpg" class="img-responsive center-block" alt="video thumb"></a>
-        <div class="list-group"> <a href="#" class="list-group-item">
-          <p class="list-group-item-heading">Heavens and the earth</p>
-          <p class="list-group-item-text">24:15 mins</p>
-          </a> <a href="#" class="list-group-item">
-          <p class="list-group-item-heading">Prayer and petition</p>
-          <p class="list-group-item-text">12:00 mins</p>
-          </a> <a href="#" class="list-group-item">
-          <p class="list-group-item-heading">Fruit of the Spirit</p>
-          <p class="list-group-item-text">30:25 mins</p>
-          </a> <a href="#" class="list-group-item">
-          <p class="list-group-item-heading">Do not be afraid; keep on...</p>
-          <p class="list-group-item-text">17:00 mins</p>
-          </a> </div>
+        <?php
+          
+          $sql_donations = "
+                              SELECT * FROM articles ORDER BY articles_id DESC LIMIT 5
+                            ";
+
+          $stmtArticles = $conn->query($sql_donations);
+          $stmtArticles->execute();
+
+        ?>
+        <div class="list-group">
+          <?php
+            while($lsArticles = $stmtArticles->fetch())
+            {
+          ?>
+          <p>
+            <a class="list-group-item" href="blog-single.php?articleID=<?= $lsArticles['articles_id']; ?>"><?= $lsArticles['article_title']; ?></a>
+          </p>
+          <?php
+            }
+          ?>
+        </div>
       </div>
     </div>
   </div>
@@ -57,13 +86,26 @@
   <div class="section-title">
     <h4> OUR TEAM </h4>
   </div>
+
+  <?php
+    $result = $conn->query("SELECT * FROM team ORDER BY id DESC");
+  ?>
   <div class="row feature-block">
-    <div class="col-md-4 col-sm-6 has-margin-bottom"> <img class="img-responsive" src="images/team-1.jpg" alt="catholic church">
-      <h5>REV: JOSE MATHEW</h5>
-      <p>Aenean lacinia bibendum nulla sed consectetur. Etiam porta sem malesuada magna mollis euismod. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa. </p>
-      <p><a href="#" role="button">Facebook</a> / <a href="#" role="button">Twitter</a></p>
+    <?php
+      while($teams = $result->fetch())
+      {
+    ?>
+    <div class="col-md-4 col-sm-6 has-margin-bottom"> 
+    <img class="img-circle" src="images/team/<?= $teams['full_name']?>.<?= $teams['ext'];?>" alt="<?= $teams['title']; ?> <?= $teams['full_name']; ?>" style="height: 250px; width: 250px;"></img>
+      <h5><?= $teams['title']; ?> <?= $teams['full_name']; ?></h5>
+      <p><?= $teams['roles']; ?></p>
+      <p><?= truncate($teams['about']); ?></p>
+      <p><a href="<?= $teams['facebook']; ?>" target="_blank" role="button">Facebook</a> / <a href="<?= $teams['tweeter']; ?>" target="_blank" role="button">Twitter</a></p>
     </div>
     <!-- /.col-md-4 -->
+    <?php
+      }
+    ?>
     <div class="col-md-4 col-sm-6 has-margin-bottom"> <img class="img-responsive" src="images/team-2.jpg" alt="ministry sermon">
       <h5>FR: VINCENT</h5>
       <p>Fermentum massa.Etiam porta sem malesuada magna mollis euismod. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa.</p>
@@ -90,6 +132,29 @@ width="100%" height="450" frameborder="0" style="border:0; margin-bottom: 15px;"
 <?php
   include_once 'footer/footer.php';
 ?>
+
+<script type="text/javascript">
+  $('.ourTeam').owlCarousel({
+    loop:true,
+    margin:10,
+    nav:true,
+    navText: [
+        "<span class='nav-arrow left'></i>",
+        "<span class='nav-arrow right'></i>"
+        ],
+      responsive:{
+          0:{
+              items:1
+          },
+      550:{
+              items:2
+          },
+          768:{
+              items:3
+          }
+      }
+  })
+</script>
 
 </body>
 </html>

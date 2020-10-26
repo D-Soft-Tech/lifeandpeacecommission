@@ -2,6 +2,57 @@
     session_start();
 
     $alertMessage = "";
+
+    if(isset($_GET['submitAddToCart']) && $_GET['submitAddToCart'] === "submitAddToCart")
+    {
+        if(isset($_SESSION['username_frontEnd']))
+        {
+            $book_id = $_GET['book_id'];
+            $book_name = $_GET['book_title'];
+
+            if($_SESSION['shoppingCart'] && (in_array($book_id, $_SESSION['shoppingCart'])) === true)
+            {
+                $alertMessage =     '<div class="alert alert-info alert-dismissable mt-2" style="margin-right: 10%; margin-top: 10px; margin-bottom: 0px; margin-left: 10%;">'.
+                                        '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
+                                        '<div class="">'.
+                                            '<h6><i class="fa fa-check"></i>&nbsp;&nbsp;&nbsp; The book already exists in your cart</h6>'.
+                                        '</div>'.
+                                    '</div>';
+            }
+            else
+            {
+                $_SESSION['shoppingCart'][] = $book_id;
+
+                $alertMessage =     '<div class="alert alert-success alert-dismissable mt-2" style="margin-right: 10%; margin-top: 10px; margin-bottom: 0px; margin-left: 10%;">'.
+                                        '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
+                                        '<div class="">'.
+                                            '<h6><i class="fa fa-check"></i>&nbsp;&nbsp;&nbsp; The book has been added to your cart</h6>'.
+                                        '</div>'.
+                                    '</div>';
+            }
+        }
+        else
+        {
+            $alertMessage = '<div class="alert alert-danger alert-dismissable mt-2" style="margin-right: 10%; margin-top: 10px; margin-bottom: 0px; margin-left: 10%;">'.
+                                '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
+                                '<div class="">'.
+                                    '<h6><i class="fa fa-check"></i>&nbsp;&nbsp;&nbsp; Sorry! You have to <a href="logs.php" class="text-danger"><b>Login</b></a> first</h6>'.
+                                '</div>'.
+                            '</div>';
+        }  
+    }
+
+    function disable_button()
+    {
+        if(isset($_SESSION['username_frontEnd']) && isset($_SESSION['password_frontEnd']) && !empty($_SESSION['username_frontEnd']) && !empty($_SESSION['password_frontEnd']))
+        {
+            echo "onclick='payWithPaystack()' type='button'";
+        }
+        else{
+            echo "data-toggle='tooltip' data-placement='right' type='button' title='You have to login first'";
+        }
+    }
+
     // Codes to redirect to payment page for shopping cart
     if(isset($_POST['payCart']))
     {
@@ -17,12 +68,12 @@
                 }
                 else
                 {
-                    $alertMessage =    '<div class="alert alert-danger alert-dismissable mt-2" style="margin-right: 10%; margin-top: 10px; margin-bottom: 0px; margin-left: 10%;">'.
-                                                    '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
-                                                    '<div class="">'.
-                                                        '<h6><i class="fa fa-check"></i>&nbsp;&nbsp;&nbsp; You have no item in your shopping cart</h6>'.
-                                                    '</div>'.
-                                                '</div>';
+                    $alertMessage =     '<div class="alert alert-danger alert-dismissable mt-2" style="margin-right: 10%; margin-top: 10px; margin-bottom: 0px; margin-left: 10%;">'.
+                                            '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
+                                            '<div class="">'.
+                                                '<h6><i class="fa fa-check"></i>&nbsp;&nbsp;&nbsp; You have no item in your shopping cart</h6>'.
+                                            '</div>'.
+                                        '</div>';
             
                     // echo $shoppingCartDontExist;
                 }
@@ -86,26 +137,23 @@ The three most essential aspect of our family are: Sound Teachings, Sweet Fellow
         <li><a href="index.php">HOME</a></li>
         <li><a href="about.php">ABOUT</a></li>
         <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">SERMONS <span class="caret"></span></a>
-          <ul class="dropdown-menu dropdown-menu-left" role="menu">
-            <li><a href="sermons.php">Christ-Occupied</a></li>
-            <li><a href="sermons.php">God's Love</a></li>
-            <li><a href="sermons.php">Faithfulness</a></li>
-            <li><a href="sermons.php">Praise Him</a></li>
-          </ul>
+            <ul class="dropdown-menu dropdown-menu-left" role="menu">
+            <li><a href="audio-gallery.php">Audio Gallery</a></li>
+            <li><a href="video-gallery.php">Video Gallery</a></li>
+            </ul>
         </li>
         <li><a href="books.php">BOOKS</a></li>
         <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">PAGES <span class="caret"></span></a>
-          <ul class="dropdown-menu dropdown-menu-left" role="menu">
+            <ul class="dropdown-menu dropdown-menu-left" role="menu">
             <li><a href="image-gallery.php">Image Gallery</a></li>
-            <li><a href="video-gallery.php">Video Gallery</a></li>
             <li><a href="blog.php">Bulletin</a></li>
             <li><a href="events-programs.php">Events &amp; Programs</a></li>
-            <li><a href="event-calendar.php">Event Calendar</a></li>
+            <li><a href="weeklyProgram.php">Weekly Program</a></li>
             <li><a href="charity-donation.php">Charity &amp; Donations</a></li>
             <li><a href="testimony.php">Testimonies</a></li>
-          </ul>
+            </ul>
         </li>
-        <li><a href="contact.php">Give Online</a></li>
+        <li><a href="give.php">Give Online</a></li>
         <li><a href="contact.php">CONTACT</a></li>
         <?php
             function href()
@@ -202,8 +250,15 @@ The three most essential aspect of our family are: Sound Teachings, Sweet Fellow
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-xs-4"><button type="submit" class="btn-transition btn btn-success" title="buy now"><i class="fa fa-credit-card"></i></button></div>
-                                    <div class="col-xs-4"><button type="submit" class="btn-transition btn btn-success" title="Add to cart"><i class="fa fa-cart-plus"></i></button></div>
+                                    <script src="https://js.paystack.co/v1/inline.js"></script>
+                                    <div class="col-xs-4">
+                                        <a class="btn-transition btn btn-success" onclick="payWithPaystack()" title="buy now">
+                                            <i class="fa fa-credit-card"></i>
+                                        </a>
+                                    </div>
+                                    <div class="col-xs-4"><a 
+                                    href="bookDetails.php?book_id=<?= $book_id; ?>&book_description=<?= $book_description;?>&book_price=<?= $book_price;?>&book_volume=<?= $book_volume; ?>&book_page=<?= $book_page;?>&book_title=<?= $book_title; ?>&book_ext1=<?= $book_ext1; ?>&book_ext2=<?= $book_ext2; ?>&submitAddToCart=submitAddToCart"
+                                     type="button" class="btn-transition btn btn-success" title="Add to cart"><i class="fa fa-cart-plus"></i></a></div>
                                     <div class="col-xs-4"><a  href="books.php" class="btn-link"><button title="Go Back to Books" class="btn-transition btn btn-success"><i class="fa fa-arrow-left"></i></button></a></div>
                                 </div>
                             </div>
@@ -275,6 +330,52 @@ The three most essential aspect of our family are: Sound Teachings, Sweet Fellow
   include_once 'footer/footer.php';
 ?>
 
+<script type="text/javascript">
+    function payWithPaystack()
+    {
+        var handler = PaystackPop.setup({
+            key: 'pk_test_e1de14e19e0aee0cd1169fbe1a5d52de0c3d633a',
+            email: '<?= $_SESSION['email_frontEnd'];?>',
+            amount: '<?= $total*100; ?>',
+            currency: "NGN", 
+            ref: '<?php $bytes = bin2hex(random_bytes(10)); $_SESSION['refCode'] = $bytes; echo $_SESSION['refCode']; ?>', // generates a pseudo-unique reference. Please replace with a reference you generated. Or remove the line entirely so our API will generate one for you
+            full_name: '<?= $_SESSION['full_name_frontEnd']; ?>',
+            address: '<?= $_SESSION['address_frontEnd']; ?>',
+            phone: '<?= $_SESSION['phone_frontEnd']; ?>',
+            metadata: {
+                custom_fields: [
+                    {
+                        display_name: "<?= $_SESSION['full_name_frontEnd']; ?>",
+                        variable_name: "<?= $_SESSION['address_frontEnd']; ?>",
+                        value: "<?= $_SESSION['phone_frontEnd']; ?>"
+                    }
+                ]
+            },
+            callback: function(response)
+            {
+                const refNum = response.reference;
+                if(response.reference === '<?= $bytes; ?>')
+                {   
+                    XmlHttp
+                    (
+                        {
+                            url: 'backend/verify.php',
+                            type: 'POST',
+                            data: 'refCode=<?= $bytes; ?>',
+                            complete:function(xhr,response,status)
+                            {
+                                document.getElementById('reportTransaction').innerHTML = response;
+                            }
+                        }
+                    );
+                }
+            },
+        });
+        handler.openIframe();
+    }
+
+</script>
+
 <script>
 
     function showShoppingCart(id)
@@ -283,6 +384,7 @@ The three most essential aspect of our family are: Sound Teachings, Sweet Fellow
     }
 
     setInterval("showShoppingCart('shoppingCartBadge')", 1000);
+
 </script>
 </body>
 </html>

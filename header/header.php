@@ -18,6 +18,9 @@ The three most essential aspect of our family are: Sound Teachings, Sweet Fellow
 <link href="css/church.css" rel="stylesheet">
 <link rel="stylesheet" href="assets/forala/css/froala_editor.pkgd.min.css">
 <link href="css/fancybox.css" rel="stylesheet">
+<link rel="stylesheet" href="assets/fontawesomeForWeb/css/all.css">
+<link rel="stylesheet" href="assets/jssocial/jssocials.css">
+<link rel="stylesheet" href="assets/jssocial/jssocials-theme-flat.css">
 <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!--[if lt IE 9]>
   <script src="js/html5shiv.js"></script>
@@ -45,20 +48,17 @@ The three most essential aspect of our family are: Sound Teachings, Sweet Fellow
             <li><a href="about.php">ABOUT</a></li>
             <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">SERMONS <span class="caret"></span></a>
               <ul class="dropdown-menu dropdown-menu-left" role="menu">
-                <li><a href="sermons.php">Christ-Occupied</a></li>
-                <li><a href="sermons.php">God's Love</a></li>
-                <li><a href="sermons.php">Faithfulness</a></li>
-                <li><a href="sermons.php">Praise Him</a></li>
+                <li><a href="audio-gallery.php">Audio Gallery</a></li>
+                <li><a href="video-gallery.php">Video Gallery</a></li>
               </ul>
             </li>
             <li><a href="books.php">BOOKS</a></li>
             <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">PAGES <span class="caret"></span></a>
               <ul class="dropdown-menu dropdown-menu-left" role="menu">
                 <li><a href="image-gallery.php">Image Gallery</a></li>
-                <li><a href="video-gallery.php">Video Gallery</a></li>
                 <li><a href="blog.php">Bulletin</a></li>
                 <li><a href="events-programs.php">Events &amp; Programs</a></li>
-                <li><a href="event-calendar.php">Event Calendar</a></li>
+                <li><a href="weeklyProgram.php">Weekly Program</a></li>
                 <li><a href="charity-donation.php">Charity &amp; Donations</a></li>
                 <li><a href="testimony.php">Testimonies</a></li>
               </ul>
@@ -90,7 +90,7 @@ The three most essential aspect of our family are: Sound Teachings, Sweet Fellow
                 {
                   echo  '<ul class="dropdown-menu dropdown-menu-left" role="menu">'.
                           '<li>'.
-                            '<a href="" class="mr-0 pr-0 dropdown-item" data-toggle="modal" data-target="#loginModal"><b>Log out</b></a>'.
+                            '<a href="#" type="button" class="mr-0 pr-0 dropdown-item logOut" name="'.$_SESSION['password_frontEnd'].'" id="'.$_SESSION['username_frontEnd'].'"><b>Log out</b></a>'.
                           '</li>'.
                         '</ul>';
                 }

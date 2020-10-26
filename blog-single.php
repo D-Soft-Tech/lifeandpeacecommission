@@ -21,7 +21,7 @@
         echo "value='submit' name='submitAddComment' type='submit'";
     }
     else{
-        echo "data-toggle='tooltip' value='Submit' data-placement='right' type='button' title='You have to login first'";
+        echo "data-toggle='tooltip' value='Submit' name='submitAddComment' data-placement='right' type='button' title='You have to login first'";
     }
   }
 
@@ -78,7 +78,7 @@
         $alertMessage = '<div class="alert alert-danger alert-dismissable mt-2" style="margin-right: 10%; margin-top: 10px; margin-bottom: 0px; margin-left: 10%;">'.
                             '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
                             '<div class="">'.
-                                '<h6><i class="fa fa-check"></i>&nbsp;&nbsp;&nbsp; Error o sending the Comment, please try again later!!!</h6>'.
+                                '<h6><i class="fa fa-check"></i>&nbsp;&nbsp;&nbsp; Error sending the Comment, please try again later. Thank You!</h6>'.
                             '</div>'.
                         '</div>';
       }

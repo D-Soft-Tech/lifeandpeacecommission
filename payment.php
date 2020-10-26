@@ -2,6 +2,10 @@
 
     session_start();
 
+    include_once 'life/php/db.php';
+
+    $conn = get_DB();
+
     if(isset($_POST['submitRemove']) && $_POST['submitRemove'] === "submitRemove")
     {
         if(isset($_SESSION['username_frontEnd']))
@@ -17,9 +21,6 @@
     {
         if(isset($_SESSION['shoppingCart']) && !empty($_SESSION['shoppingCart']))
         {
-            include_once 'life/php/db.php';
-
-            $conn = get_DB();
             $book_id = $_SESSION['shoppingCart'];
             $userName = $_SESSION['username_frontEnd'];
 
@@ -54,12 +55,13 @@
 
             <div class="container">
                 <div class="row">
-                    <div class="col-md-9 col-xs-12 px-auto">
+                    <div class="col-md-9 col-xs-12 px-auto" id="reportTransaction">
                         <h6 Class="bg-success text-center" style="padding: 10px;">Books in your shopping Cart</h6>
                         <div class="col-xs-12 pull-center">
 
                             <!-- Shopping Cart Details -->
                             <?php
+                                $total= 0;
                                 for($i = 0; $i<COUNT($book_id); ++$i)
                                 {
                                     $sql_book = "
@@ -70,6 +72,9 @@
                                     $stmt->bindParam(':book_id', $book_id[$i]);
                                     $stmt->execute();
                                     $bookDetails = $stmt->fetch();
+
+                                    $total += $bookDetails['price'];
+
                             ?>  
                                     <div class="row" style="margin-bottom: 10px;" id="<?= $bookDetails['book_id']; ?>">
                                         <div class="col-xs-4 col-md-2 text-center">
@@ -82,7 +87,7 @@
                                                     <p>Price: <span><?= $bookDetails['price'];?></span></p>
                                                     <p>
                                                         <form method="POST">
-                                                            <input type="text" name="removeBookFromCart" value="<?= $books['book_id']; ?>" hidden>
+                                                            <input type="text" name="removeBookFromCart" value="<?= $bookDetails['book_id']; ?>" hidden>
                                                             <button type="submit" class="btn btn-danger btn-xs" name="submitRemove" value="submitRemove">
                                                                 Remove from cart
                                                             </button>
@@ -101,25 +106,14 @@
                                     <h6 Class="bg-success text-center" style="padding: 10px;">Summary</h6>
                                     <p class="text-center"><strong> Number of Items: <span><?= COUNT($book_id); ?></span></strong></p>
                                     <p class="text-center"><strong>Total: <span>
-                                        <?php
-                                            $total = 0;
-                                            for($i = 0; $i<COUNT($book_id); ++$i)
-                                            {
-                                                $sql_book = "
-                                                    SELECT * FROM books WHERE book_id = :book_id
-                                                ";
-
-                                                $stmt = $conn->prepare($sql_book);
-                                                $stmt->bindParam(':book_id', $book_id[$i]);
-                                                $stmt->execute();
-                                                $bookDetails = $stmt->fetch();
-
-                                                $total += $bookDetails['price'];
-                                            };
-                                            echo $total;
-                                        ?>
+                                        <?= $total; ?>
                                     </span></strong></p>
-                                    <p class="text-center"><a class="btn text-center" value="<?= $total; ?>" role="button">Pay</a></p>
+                                    <p class="text-center">
+                                        <script src="https://js.paystack.co/v1/inline.js"></script>
+                                        <a class="btn text-center" value="<?= $total; ?>" onclick='payWithPaystack()' role="button">
+                                            Pay
+                                        </a>
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -172,6 +166,52 @@
         include_once 'footer/footer.php';
         ?>
 
+        <script>
+
+            function payWithPaystack()
+            {
+                var handler = PaystackPop.setup({
+                    key: 'pk_test_e1de14e19e0aee0cd1169fbe1a5d52de0c3d633a',
+                    email: '<?= $_SESSION['email_frontEnd'];?>',
+                    amount: '<?= $total*100; ?>',
+                    currency: "NGN", 
+                    ref: '<?php $bytes = bin2hex(random_bytes(10)); $_SESSION['refCode'] = $bytes; echo $_SESSION['refCode']; ?>', // generates a pseudo-unique reference. Please replace with a reference you generated. Or remove the line entirely so our API will generate one for you
+                    full_name: '<?= $_SESSION['full_name_frontEnd']; ?>',
+                    address: '<?= $_SESSION['address_frontEnd']; ?>',
+                    phone: '<?= $_SESSION['phone_frontEnd']; ?>',
+                    metadata: {
+                        custom_fields: [
+                            {
+                                display_name: "<?= $_SESSION['full_name_frontEnd']; ?>",
+                                variable_name: "<?= $_SESSION['address_frontEnd']; ?>",
+                                value: "<?= $_SESSION['phone_frontEnd']; ?>"
+                            }
+                        ]
+                    },
+                    callback: function(response)
+                    {
+                        const refNum = response.reference;
+                        if(response.reference === '<?= $bytes; ?>')
+                        {   
+                            XmlHttp
+                            (
+                                {
+                                    url: 'backend/verify.php',
+                                    type: 'POST',
+                                    data: 'refCode=<?= $bytes; ?>',
+                                    complete:function(xhr,response,status)
+                                    {
+                                       document.getElementById('reportTransaction').innerHTML = response;
+                                    }
+                                }
+                            );
+                        }
+                    },
+                });
+                handler.openIframe();
+            }
+        </script>
+
         </body>
         </html>
 <?php
@@ -184,5 +224,3 @@
         header('Location: books.php');
     }
 ?>
-
-    

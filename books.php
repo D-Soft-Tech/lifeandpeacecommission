@@ -94,11 +94,11 @@
                 else
                 {
                     $alertMessage =    '<div class="alert alert-danger alert-dismissable mt-2" style="margin-right: 10%; margin-top: 10px; margin-bottom: 0px; margin-left: 10%;">'.
-                                                    '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
-                                                    '<div class="">'.
-                                                        '<h6><i class="fa fa-check"></i>&nbsp;&nbsp;&nbsp; You have no item in your shopping cart</h6>'.
-                                                    '</div>'.
-                                                '</div>';
+                                            '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
+                                            '<div class="">'.
+                                                '<h6><i class="fa fa-check"></i>&nbsp;&nbsp;&nbsp; You have no item in your shopping cart</h6>'.
+                                            '</div>'.
+                                        '</div>';
             
                     // echo $shoppingCartDontExist;
                 }
@@ -125,7 +125,7 @@
             $book_id = $_POST['addToCartBookId'];
             $book_name = $_POST['addToCartBookTitle'];
 
-            if(in_array($book_id, $_SESSION['shoppingCart']))
+            if($_SESSION['shoppingCart'] && (in_array($book_id, $_SESSION['shoppingCart'])) === true)
             {
                 $alertMessage =     '<div class="alert alert-info alert-dismissable mt-2" style="margin-right: 10%; margin-top: 10px; margin-bottom: 0px; margin-left: 10%;">'.
                                         '<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>'.
@@ -202,26 +202,23 @@ The three most essential aspect of our family are: Sound Teachings, Sweet Fellow
         <li><a href="index.php">HOME</a></li>
         <li><a href="about.php">ABOUT</a></li>
         <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">SERMONS <span class="caret"></span></a>
-          <ul class="dropdown-menu dropdown-menu-left" role="menu">
-            <li><a href="sermons.php">Christ-Occupied</a></li>
-            <li><a href="sermons.php">God's Love</a></li>
-            <li><a href="sermons.php">Faithfulness</a></li>
-            <li><a href="sermons.php">Praise Him</a></li>
-          </ul>
+            <ul class="dropdown-menu dropdown-menu-left" role="menu">
+            <li><a href="audio-gallery.php">Audio Gallery</a></li>
+            <li><a href="video-gallery.php">Video Gallery</a></li>
+            </ul>
         </li>
         <li><a href="books.php">BOOKS</a></li>
         <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">PAGES <span class="caret"></span></a>
-          <ul class="dropdown-menu dropdown-menu-left" role="menu">
+            <ul class="dropdown-menu dropdown-menu-left" role="menu">
             <li><a href="image-gallery.php">Image Gallery</a></li>
-            <li><a href="video-gallery.php">Video Gallery</a></li>
             <li><a href="blog.php">Bulletin</a></li>
             <li><a href="events-programs.php">Events &amp; Programs</a></li>
-            <li><a href="event-calendar.php">Event Calendar</a></li>
+            <li><a href="weeklyProgram.php">Weekly Program</a></li>
             <li><a href="charity-donation.php">Charity &amp; Donations</a></li>
             <li><a href="testimony.php">Testimonies</a></li>
-          </ul>
+            </ul>
         </li>
-        <li><a href="contact.php">Give Online</a></li>
+        <li><a href="give.php">Give Online</a></li>
         <li><a href="contact.php">CONTACT</a></li>
         <?php
             function href()
